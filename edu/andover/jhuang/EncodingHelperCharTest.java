@@ -13,25 +13,33 @@ public class EncodingHelperCharTest {
 		assertEquals("Did not make codepoint correctly", 10295, outputCodePoint);
 	}
 	
+	/*
+	 * checks that the constructor throws when the input codepoint is
+	 * out of range - negative
+	 */
 	@Test
 	public void illegalCharConstructorShouldThrowWhenCodepointIsNegative() {
 		 try {
 				EncodingHelperChar c = new EncodingHelperChar(-1);
-		        fail("My constructor didn't throw when the codepoint was negative");
+		        fail("My constructor didn't throw when the codepoint wasm out of range - negative");
 		 } catch(IllegalArgumentException expectedException) {
 		        // No action needed.
 		 }
 	}
 	
-	@Test
+	/*
+	 * checks that the constructor throws when the input codepoint is 
+	 * out of range - too large
+	 */
+	@Test 
 	public void illegalCharConstructorShouldThrowWhenCodepointIsTooLarge() {
 		try {
 				EncodingHelperChar c = new EncodingHelperChar(0x110000);
-				fail("My constructor didn't throw when the codepoint was too large");
+				EncodingHelperChar c2 = new EncodingHelperChar(0x111111);
+				fail("My constructor didn't throw when the codepoint was out of range - too large");
 		} catch (IllegalArgumentException e) {
-				
+				//No action needed.
 		}
 	}
-	
 
 }
