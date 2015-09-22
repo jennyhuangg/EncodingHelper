@@ -217,8 +217,8 @@ public class EncodingHelperCharTest {
 	public void constructorArrayWith0PrefixForByteSequenceShouldThrow() {
 		//for arbitrary utf8 byte sequence with 0  prefix in bounds
 		try {
-			byte[] b = new byte[]{(byte)0x74,(byte)0x8F,(byte)0xBF,(byte)0xBF};
-			EncodingHelperChar c = new EncodingHelperChar(b);
+			byte[] b1 = new byte[]{(byte)0x74,(byte)0x8F,(byte)0xBF,(byte)0xBF};
+			EncodingHelperChar c1 = new EncodingHelperChar(b1);
 			fail(
 				"Constructor didn't throw when byte sequence had incorrect"
 				+ "prefix - first byte of multi-byte sequence has prefix of O."
@@ -228,8 +228,8 @@ public class EncodingHelperCharTest {
 		}	
 		//for utf8 byte sequence of 0's (lower bound for those with 0 prefix)
 		try {
-			byte[] b = new byte[]{(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00};
-			EncodingHelperChar c = new EncodingHelperChar(b);
+			byte[] b2 = new byte[]{(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00};
+			EncodingHelperChar c2 = new EncodingHelperChar(b2);
 			fail(
 				"Constructor didn't throw when byte sequence had incorrect"
 				+ "prefix - first byte of multi-byte sequence has prefix of O."
@@ -239,8 +239,8 @@ public class EncodingHelperCharTest {
 		}
 		//for utf8 byte sequence of 0x7F 0xBF 0xBF 0xBF (higher bound for those with 0 prefix)
 		try {
-			byte[] b = new byte[]{(byte)0x7F,(byte)0xBF,(byte)0xBF,(byte)0xBF};
-			EncodingHelperChar c = new EncodingHelperChar(b);
+			byte[] b3 = new byte[]{(byte)0x7F,(byte)0xBF,(byte)0xBF,(byte)0xBF};
+			EncodingHelperChar c3 = new EncodingHelperChar(b3);
 			fail(
 				"Constructor didn't throw when byte sequence had incorrect"
 				+ "prefix - first byte of multi-byte sequence has prefix of O."
@@ -257,8 +257,8 @@ public class EncodingHelperCharTest {
 	@Test
 	public void constructorArrayWith10PrefixForByteSequenceShouldThrow() {
 		try {
-			byte[] b = new byte[]{(byte)0x94,(byte)0x8F,(byte)0xBF,(byte)0xBF};
-			EncodingHelperChar c = new EncodingHelperChar(b);
+			byte[] b1 = new byte[]{(byte)0x94,(byte)0x8F,(byte)0xBF,(byte)0xBF};
+			EncodingHelperChar c1 = new EncodingHelperChar(b1);
 			fail(
 				"Constructor didn't throw when byte sequence had incorrect"
 				+ "prefix - first byte has a prefix of 1O."
@@ -267,8 +267,8 @@ public class EncodingHelperCharTest {
 			//No action needed.
 		}	
 		try {
-			byte[] b = new byte[]{(byte)0x80,(byte)0x00,(byte)0x00,(byte)0x00};
-			EncodingHelperChar c = new EncodingHelperChar(b);
+			byte[] b2 = new byte[]{(byte)0x80,(byte)0x00,(byte)0x00,(byte)0x00};
+			EncodingHelperChar c2 = new EncodingHelperChar(b2);
 			fail(
 				"Constructor didn't throw when byte sequence had incorrect"
 				+ "prefix - first byte has prefix of 1O."
@@ -277,8 +277,8 @@ public class EncodingHelperCharTest {
 			//No action needed.
 		}
 		try {
-			byte[] b = new byte[]{(byte)0xBF,(byte)0xBF,(byte)0xBF,(byte)0xBF};
-			EncodingHelperChar c = new EncodingHelperChar(b);
+			byte[] b3 = new byte[]{(byte)0xBF,(byte)0xBF,(byte)0xBF,(byte)0xBF};
+			EncodingHelperChar c3 = new EncodingHelperChar(b3);
 			fail(
 				"Constructor didn't throw when byte sequence had incorrect"
 				+ "prefix - first byte has prefix of 1O."
@@ -288,90 +288,41 @@ public class EncodingHelperCharTest {
 		}	
 	}
 	
-	// two bytes sequences
-		//first byte does not start with 110
-	@Test 
-	public void constructorArrayWithTwoByteArrayWithout110PrefixShouldThrow() {
+	//invalid continuation byte (correct: low bound 80 and high bound bf)
+	@Test
+	public void constructorArrayWithInvalidContinuationBytesShouldThrow() {
 		try {
-				byte[] b1 = new byte[] {(byte)0xFF,(byte)0xBF};
-				EncodingHelperChar c = new EncodingHelperChar(b1);
-				fail(
-					"Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte does not have prefix of 11O."
-				);
+			byte[] b1 = {(byte)0xDF, (byte)0x7F}; //second byte prefix of 01
+			EncodingHelperChar c1 = new EncodingHelperChar(b1);
+			fail(
+				"Constructor didn't throw when the byte sequence's "
+				+ "continuation byte was invalid - prefix of not 10."
+			);
 		} catch (IllegalArgumentException e) {
-				//No action needed.
+			//No action needed.
 		}
 		try {
-			byte[] b2 = new byte[] {(byte)0xE2, (byte)0x80};
-			EncodingHelperChar c = new EncodingHelperChar(b2);
+			byte[] b2 = {(byte)0xDF, (byte)0x3F}; //second byte prefix of 00
+			EncodingHelperChar c2 = new EncodingHelperChar(b2);
 			fail(
-				"Constructor didn't throw when byte sequence had incorrect"
-			+ "prefix - first byte does not have prefix of 11O."
+				"Constructor didn't throw when the byte sequence's "
+				+ "continuation byte was invalid - prefix not 10."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+		try {
+			byte[] b3 = {(byte)0xDF, (byte)0xF1}; //second byte prefix of 11
+			EncodingHelperChar c3 = new EncodingHelperChar(b3);
+			fail(
+				"Constructor didn't throw when the byte sequence's "
+				+ "continuation byte was invalid - prefix not 10."
 			);
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
 	}
-	
-	//second byte does not start with 10, continuation bytes are not between 0x80 and 0xbf
-	@Test 
-	public void constructorArrayWithTwoByteArrayWhoseSecondByteDoesNotHave10PrefixShouldThrow() {
-		//second byte has prefix 01
-		try {
-				byte[] b1 = new byte[] {(byte)0xDF,(byte)0x7F};
-				EncodingHelperChar c = new EncodingHelperChar(b1);
-				fail(
-					"Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - continuation byte does not have prefix of 1O."
-				);
-		} catch (IllegalArgumentException e) {
-				//No action needed.
-		}
-		//second byte has prefix 11
-		try {
-			byte[] b2 = new byte[] {(byte)0xDF, (byte)0xFF}; 
-			EncodingHelperChar c = new EncodingHelperChar(b2);
-			fail(
-				"Constructor didn't throw when byte sequence had incorrect"
-			+ "prefix - continuation byte does not have prefix of 1O."
-			);
-		} catch (IllegalArgumentException e) {
-			//No action needed.
-		}
-	}
-	//three byte sequence
-	//110 prefix
-	@Test 
-	public void constructorArrayWithThreeByteArrayWithout1110PrefixShouldThrow() {
-		//second byte has prefix 01
-		try {
-				byte[] b1 = new byte[] {(byte)0xDF,(byte)0x7F};
-				EncodingHelperChar c = new EncodingHelperChar(b1);
-				fail(
-					"Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - continuation byte does not have prefix of 1O."
-				);
-		} catch (IllegalArgumentException e) {
-				//No action needed.
-		}
-		//second byte has prefix 11
-		try {
-			byte[] b2 = new byte[] {(byte)0xDF, (byte)0xFF}; 
-			EncodingHelperChar c = new EncodingHelperChar(b2);
-			fail(
-				"Constructor didn't throw when byte sequence had incorrect"
-			+ "prefix - continuation byte does not have prefix of 1O."
-			);
-		} catch (IllegalArgumentException e) {
-			//No action needed.
-		}
-	}
-	//10 continuation prefix
-	
-	//four byte sequence
-	
-	//invalid continuation byte (for correct: low bound 80 high bound bf)
+
 	//no ff or fe
 
 	//specified prefix should correspond to number of bytes
