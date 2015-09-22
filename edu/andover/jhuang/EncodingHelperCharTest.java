@@ -171,8 +171,6 @@ public class EncodingHelperCharTest {
 	/*
 	 * Tests that the constructor (for UTF-8 byte sequence) throws when
 	 * the binary representation of an input 1 byte sequence begins with 1.
-	 * 
-	 * These invalid 1 byte sequences are bytes larger than 0x75.
 	 */
 	@Test
 	public void constructorArrayWithIncorrectPrefixFor1ByteSequenceShouldThrow() {
@@ -211,25 +209,50 @@ public class EncodingHelperCharTest {
 		}
 	}
 	
-	//first byte of multi-byte sequence begins with "0"
+	//throws when first byte of multi-byte sequence begins with "0"
 	@Test
 	public void constructorArrayWithIncorrectPrefixForByteSequenceShouldThrow() {
+		//arbitrary utf8 byte sequence beginning with 0 in bounds
 		try {
-			byte[] b = new byte[]{(byte)0xF4,(byte)0x8F,(byte)0xBF,(byte)0xBF,
-					(byte)0x32};
+			byte[] b = new byte[]{(byte)0x74,(byte)0x8F,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c = new EncodingHelperChar(b);
 			fail(
-				"Constructor didn't throw when byte array was empty."
+				"Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte of multi-byte sequence has prefix of O."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}	
+		//lower bound of utf8 byte sequence beginning with 0
+		try {
+			byte[] b = new byte[]{(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00};
+			EncodingHelperChar c = new EncodingHelperChar(b);
+			fail(
+				"Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte of multi-byte sequence has prefix of O."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+		//higher bound of utf8 byte sequence beginning with 0
+		try {
+			byte[] b = new byte[]{(byte)0x7F,(byte)0xBF,(byte)0xBF,(byte)0xBF};
+			EncodingHelperChar c = new EncodingHelperChar(b);
+			fail(
+				"Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte of multi-byte sequence has prefix of O."
 			);
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}	
 	}
 
-	//first byte of multi-byte sequence begins with "10"
+	//first has prefix "10"
 	
+	//invalid continuation byte (for correct: low bound 80 high bound bf)
 	//no ff or fe
 	//bytes after the first for multiple byte sequences do not begin with 10
+	/////specified prefix should correspond to number of bytes
 	//should be 3 bytes but missing a continuation byte
 	//should by 3 bytes but has an unexpected continuation byte
 	//continuation bytes are not between 0x80 and 0xbf
