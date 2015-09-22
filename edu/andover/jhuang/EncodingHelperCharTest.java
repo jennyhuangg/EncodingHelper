@@ -7,23 +7,11 @@ import org.junit.Test;
 public class EncodingHelperCharTest {
 	
 	/*
-	 * checks that getCodepoint() returns the integer codepoint specified in
-	 * constructing the object
-	 */
-	@Test
-	public void testGetCodePoint_MatchesValuePassedToConstructor() {
-		int x = 10295;
-		EncodingHelperChar c = new EncodingHelperChar(x);
-		int outputCodePoint = c.getCodepoint();
-		assertEquals("Constructor has incorrect codepoint", x, outputCodePoint);
-	}
-	
-	/*
 	 * checks that the constructor throws when the input codepoint is
 	 * out of range - negative
 	 */
 	@Test
-	public void illegalCharConstructorShouldThrowWhenCodepointIsNegative() {
+	public void testIllegalCharConstructorShouldThrowWhenCodepointIsNegative() {
 		 try {
 			 	EncodingHelperChar c = new EncodingHelperChar(-1);
 			 	EncodingHelperChar c2 = new EncodingHelperChar(-51020);
@@ -41,7 +29,7 @@ public class EncodingHelperCharTest {
 	 * out of range - too large
 	 */
 	@Test 
-	public void illegalCharConstructorShouldThrowWhenCodepointIsTooLarge() {
+	public void testIllegalCharConstructorShouldThrowWhenCodepointIsTooLarge() {
 		try {
 				EncodingHelperChar c = new EncodingHelperChar(0x110000);
 				EncodingHelperChar c2 = new EncodingHelperChar(0x111111);
@@ -52,6 +40,20 @@ public class EncodingHelperCharTest {
 		} catch (IllegalArgumentException e) {
 				//No action needed.
 		}
+	}
+	
+	/*
+	 * checks that getCodepoint() returns the integer codepoint specified in
+	 * constructing the object
+	 */
+	@Test
+	public void testGetCodePoint_MatchesValuePassedToConstructor() {
+		int x = 0x1F1F;
+		int y = 0x1AAAA;
+		EncodingHelperChar c = new EncodingHelperChar(x);
+		EncodingHelperChar c2 = new EncodingHelperChar(y);
+		int outputCodePoint = c.getCodepoint();
+		assertEquals("Constructor has incorrect codepoint", x, outputCodePoint);
 	}
 	
 	@Test
