@@ -18,29 +18,32 @@ public class EncodingHelperCharTest {
 	 * codepoint specified when constructing the object
 	 */
 	
-	//For arbitrary middle codepoint int
+	//For arbitrary middle codepoint
 	@Test
-	public void getCodepoint_ShouldMatchCodepointPassedToConstructorInt() {
+	public void getCodepointShouldMatchCodepointPassedToConstructorInt() {
 		int x = 0x1F1F;
 		EncodingHelperChar c = new EncodingHelperChar(x);
 		int outputCodepoint = c.getCodepoint();
-		assertEquals("failed to construct correctly", x, outputCodepoint);
+		assertEquals("failed to construct correctly - 0x1F1F should be 0x1F1F",
+				x, outputCodepoint); //thanks Cam for helping with fail messages
 	}
 	//For codepoint of 0 (lower bound of valid codepoints)
 	@Test
-	public void testMinCodepointShouldBeAccepted() {
+	public void minCodepointShouldBeAccepted() {
 		int x = 0;
 		EncodingHelperChar c = new EncodingHelperChar(x);
 		int outputCodepoint = c.getCodepoint();
-		assertEquals("failed to construct correctly - 0 should be 0", x, outputCodepoint);
+		assertEquals("failed to construct correctly - 0 should be 0",
+				x, outputCodepoint);
 	}
 	//For codepoint of 0x10FFFF (upper bound of valid codepoints)
 	@Test
-	public void testMaxCodepointShouldBeAccepted () {
+	public void maxCodepointShouldBeAccepted () {
 		int x = 0x10FFFF;
 		EncodingHelperChar c = new EncodingHelperChar(x);
 		int outputCodepoint = c.getCodepoint();
-		assertEquals("failed to construct correctly - 0x10FFFF should be 0x10FFFFF", x, outputCodepoint);
+		assertEquals("failed to construct correctly - 0x10FFFF should be 0x10FFFFF",
+				x, outputCodepoint);
 	}
 	
 	/*
@@ -58,6 +61,7 @@ public class EncodingHelperCharTest {
 		 } catch(IllegalArgumentException expectedException) {
 		        // No action needed.
 		 }
+		 //thanks Cam for explaining try catch
 	}
 	/*
 	 * Tests that the constructor (for integer parameter) throws when 
@@ -87,14 +91,15 @@ public class EncodingHelperCharTest {
 		int x = 0x1F800;
 		EncodingHelperChar c = new EncodingHelperChar(b);
 		int outputCodepoint = c.getCodepoint();
-		assertEquals("failed to construct correctly", x, outputCodepoint);	
+		assertEquals("failed to construct correctly - 0x1F800 should be 0x1F800",
+				x, outputCodepoint);	
 	}
 	
 	/*
 	 * Tests that the constructor (for UTF-8 byte sequence) throws when
 	 * the binary representation of an input 1 byte sequence begins with 1.
 	 * 
-	 * These invalid 1 byte sequences are larger than 0x75.
+	 * These invalid 1 byte sequences are bytes larger than 0x75.
 	 */
 	@Test
 	public void constructorArrayWithIncorrectPrefixFor1ByteSequenceShouldThrow() {
@@ -133,6 +138,23 @@ public class EncodingHelperCharTest {
 		}
 	}
 	
+	/*
+	 * Tests that the constructor (for array parameter) throws when
+	 * the array is empty
+	 */
+	@Test
+	public void constructorArrayIfEmptyShouldThrow() {
+		try {
+			byte[] b = {};
+			EncodingHelperChar c = new EncodingHelperChar(b);
+			fail(
+				"Constructor didn't throw when byte array was empty."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}	
+	}
+
 	//Tests that toUtf8Bytes() does not return null
 	@Test
 	public void toUTFBytesShouldReturnNonEmpty() {
@@ -140,9 +162,7 @@ public class EncodingHelperCharTest {
 		assertFalse(c.toUtf8String().isEmpty());
 	}
 	
-	/*
-	 * tests that 
-	 */
+	
 	
 	//multiple byte sequences should not begin with "10"
 	//bytes after the first for multiple byte sequences must begin with 10
@@ -151,7 +171,5 @@ public class EncodingHelperCharTest {
 	//subsequent bytes cannot 
 	
 	//sevenBitCodepointShouldEncodeInOneByte
-	//toUtf8BytesShouldReturnNonEmpty
-	//
 
 }
