@@ -13,20 +13,30 @@ import org.junit.Test;
 
 public class EncodingHelperCharTest {
 	
+	//check first, last, middle
+	
 	/*
 	 * tests that getCodepoint() returns the integer codepoint specified when
 	 * constructing the object
 	 */
 	@Test
-	public void getCodePoint_ShouldMatchCodepointPassedToConstructorInt() {
+	public void getCodepoint_ShouldMatchCodepointPassedToConstructorInt() {
 		int x = 0x1F1F;
-		int y = 0x1AAAA;
 		EncodingHelperChar c = new EncodingHelperChar(x);
-		EncodingHelperChar d = new EncodingHelperChar(y);
-		int xOutputCodepoint = c.getCodepoint();
-		int yOutputCodepoint = d.getCodepoint();
-		assertEquals("failed to construct correctly", x, xOutputCodepoint);
-		assertEquals("failed to construct correctly", y, yOutputCodepoint);
+		int outputCodepoint = c.getCodepoint();
+		assertEquals("failed to construct correctly", x, outputCodepoint);
+	}
+	
+	/*
+	 * tests that the constructor with 0 parameter creates an object 
+	 * with codepoint 0
+	 */
+	@Test
+	public void codepoint0Shouldbe0() {
+		int x = 0x1F1F;
+		EncodingHelperChar c = new EncodingHelperChar(x);
+		int outputCodepoint = c.getCodepoint();
+		assertEquals("failed to construct correctly", x, outputCodepoint);
 	}
 	
 	/*
@@ -66,8 +76,28 @@ public class EncodingHelperCharTest {
 	}
 	
 	/*
+	 * tests that the constructor (for integer parameter) throws when
+	 * the binary representation of the UTF-8 byte sequence for the
+	 * input codepoint starts with 1.
+	 * (codepoint is between
+	 */
+	@Test
+	public void constructorIntWithInvalidCodepointFor1ByteShouldThrow() {
+		try {
+				EncodingHelperChar c = new EncodingHelperChar(0x80);
+				EncodingHelperChar c2 = new EncodingHelperChar(0x9A);
+				EncodingHelperChar c3 = new EncodingHelperChar(0xFF);
+				fail(
+					"Constructor didn't throw when the byte sequence "
+					+ "was invalid - incorrect prefix for 1 byte sequence."
+				);
+		} catch (IllegalArgumentException e) {
+				//No action needed.
+		}
+	}
+	/*
 	 * tests that getCodepoint() returns the integer codepoint that
-	 * corresponds the the byte array specified when constructing
+	 * corresponds to the byte array specified when constructing
 	 * the object.
 	 */
 	@Test
@@ -80,14 +110,16 @@ public class EncodingHelperCharTest {
 	}
 	
 	/*
-	 * tests that the binary representation of a 1 byte UTF-8 sequence
-	 * does not begin with 1.
+	 * tests that the constructor (for UTF-8 byte sequence) throws when
+	 * the binary representation of a 1 byte sequence begins with 1.
+	 * (codepoint 
 	 */
 	@Test
 	public void constructorArrayWithIncorrectPrefixFor1ByteSequenceShouldThrow() {
 		try {
 				EncodingHelperChar c = new EncodingHelperChar(0x80);
-				EncodingHelperChar c2 = new EncodingHelperChar(0xFF);
+				EncodingHelperChar c2 = new EncodingHelperChar(0x9A);
+				EncodingHelperChar c3 = new EncodingHelperChar(0xFF);
 				fail(
 					"Constructor didn't throw when the byte sequence "
 					+ "was invalid - incorrect prefix for 1 byte sequence."
@@ -96,7 +128,9 @@ public class EncodingHelperCharTest {
 				//No action needed.
 		}
 	}
-	
+	/*
+	 * tests that 
+	 */
 	//multiple byte sequences should not begin with "10"
 	//bytes after the first for multiple byte sequences must begin with 10
 	//missing a continuation byte
