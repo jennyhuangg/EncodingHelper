@@ -89,7 +89,7 @@ public class EncodingHelperCharTest {
 	
 	//For arbitrary byte array in bounds
 	@Test
-	public void getCodepointShouldMatchCodepointPassedToConstructorArray() {
+	public void getCodepointShouldCorrespondToByteArrayPassedToConstructorArray() {
 		byte[] b = new byte[]{(byte)0xF0,(byte)0x9F,(byte)0xA0,(byte)0x80};
 		int x = 0x1F800;
 		EncodingHelperChar c = new EncodingHelperChar(b);
@@ -291,6 +291,7 @@ public class EncodingHelperCharTest {
 		}	
 	}
 	// two bytes sequences
+	
 		//first byte does not start with 110
 		//second byte does not start with 10
 	//three byte sequence
@@ -307,6 +308,20 @@ public class EncodingHelperCharTest {
 	//overlong sequence with extra 0s (reject it!)
 	//utf 16 surrogates
 	
+	/*
+	 * Tests that getCodepoint() returns the corresponding codepoint for the
+	 * char specified when constructing the object
+	 */
+	@Test
+	public void getCodepointShouldCorrespondToCharPassedToConstructorChar() {
+		char ch = 'e';
+		int charCodepoint = 0x0065;
+		EncodingHelperChar c = new EncodingHelperChar(ch);
+		assertEquals("Failed to construct correctly - 'e' should have codepoint"
+				+ "0x0065", charCodepoint, c.getCodepoint());
+		//if you have time, do lower and upper bounds too!!!
+	}
+
 	/*
 	 * The following three methods test that setCodepoint(int codepoint) 
 	 * changes the object's codepoint to the input integer.
@@ -346,7 +361,7 @@ public class EncodingHelperCharTest {
 	 * the codepoint is out of range - negative
 	 */
 	@Test
-	public void setCodepointForNegativeCodepointShouldThrow() {
+	public void setCodepointWithNegativeCodepointShouldThrow() {
 		 try {
 			 	EncodingHelperChar c = new EncodingHelperChar(0x1AAA);
 			 	c.setCodepoint(-1);
@@ -358,13 +373,12 @@ public class EncodingHelperCharTest {
 		        // No action needed.
 		 }
 	}
-	
 	/*
 	 * Tests that the constructor (for integer parameter) throws when 
 	 * the codepoint is out of range - too large
 	 */
 	@Test 
-	public void setCodepointForTooLargeCodepointShouldThrow() {
+	public void setCodepointWithTooLargeCodepointShouldThrow() {
 		try {
 				EncodingHelperChar c = new EncodingHelperChar(0x1AAA);
 				c.setCodepoint(0x110000);
