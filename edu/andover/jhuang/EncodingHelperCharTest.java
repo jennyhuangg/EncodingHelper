@@ -256,7 +256,6 @@ public class EncodingHelperCharTest {
 	 */
 	@Test
 	public void constructorArrayWith10PrefixForByteSequenceShouldThrow() {
-		//for arbitrary utf8 byte sequence with 10 prefix in bounds
 		try {
 			byte[] b = new byte[]{(byte)0x94,(byte)0x8F,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c = new EncodingHelperChar(b);
@@ -267,7 +266,6 @@ public class EncodingHelperCharTest {
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}	
-		//for lower bound utf8 byte sequence whose first byte has 10 prefix
 		try {
 			byte[] b = new byte[]{(byte)0x80,(byte)0x00,(byte)0x00,(byte)0x00};
 			EncodingHelperChar c = new EncodingHelperChar(b);
@@ -278,7 +276,6 @@ public class EncodingHelperCharTest {
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
-		//for higher bound utf8 byte sequence whose first byte has 10 prefix
 		try {
 			byte[] b = new byte[]{(byte)0xBF,(byte)0xBF,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c = new EncodingHelperChar(b);
@@ -290,13 +287,89 @@ public class EncodingHelperCharTest {
 			//No action needed.
 		}	
 	}
-	// two bytes sequences
 	
+	// two bytes sequences
 		//first byte does not start with 110
-		//second byte does not start with 10
+	@Test 
+	public void constructorArrayWithTwoByteArrayWithout110PrefixShouldThrow() {
+		try {
+				byte[] b1 = new byte[] {(byte)0xFF,(byte)0xBF};
+				EncodingHelperChar c = new EncodingHelperChar(b1);
+				fail(
+					"Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte does not have prefix of 11O."
+				);
+		} catch (IllegalArgumentException e) {
+				//No action needed.
+		}
+		try {
+			byte[] b2 = new byte[] {(byte)0xE2, (byte)0x80};
+			EncodingHelperChar c = new EncodingHelperChar(b2);
+			fail(
+				"Constructor didn't throw when byte sequence had incorrect"
+			+ "prefix - first byte does not have prefix of 11O."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+	}
+	
+	//second byte does not start with 10, continuation bytes are not between 0x80 and 0xbf
+	@Test 
+	public void constructorArrayWithTwoByteArrayWhoseSecondByteDoesNotHave10PrefixShouldThrow() {
+		//second byte has prefix 01
+		try {
+				byte[] b1 = new byte[] {(byte)0xDF,(byte)0x7F};
+				EncodingHelperChar c = new EncodingHelperChar(b1);
+				fail(
+					"Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - continuation byte does not have prefix of 1O."
+				);
+		} catch (IllegalArgumentException e) {
+				//No action needed.
+		}
+		//second byte has prefix 11
+		try {
+			byte[] b2 = new byte[] {(byte)0xDF, (byte)0xFF}; 
+			EncodingHelperChar c = new EncodingHelperChar(b2);
+			fail(
+				"Constructor didn't throw when byte sequence had incorrect"
+			+ "prefix - continuation byte does not have prefix of 1O."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+	}
 	//three byte sequence
-	//continuation bytes for three bytes
-	//continuation bytes for four bytes
+	//110 prefix
+	@Test 
+	public void constructorArrayWithThreeByteArrayWithout1110PrefixShouldThrow() {
+		//second byte has prefix 01
+		try {
+				byte[] b1 = new byte[] {(byte)0xDF,(byte)0x7F};
+				EncodingHelperChar c = new EncodingHelperChar(b1);
+				fail(
+					"Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - continuation byte does not have prefix of 1O."
+				);
+		} catch (IllegalArgumentException e) {
+				//No action needed.
+		}
+		//second byte has prefix 11
+		try {
+			byte[] b2 = new byte[] {(byte)0xDF, (byte)0xFF}; 
+			EncodingHelperChar c = new EncodingHelperChar(b2);
+			fail(
+				"Constructor didn't throw when byte sequence had incorrect"
+			+ "prefix - continuation byte does not have prefix of 1O."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+	}
+	//10 continuation prefix
+	
+	//four byte sequence
 	
 	//invalid continuation byte (for correct: low bound 80 high bound bf)
 	//no ff or fe
@@ -304,8 +377,26 @@ public class EncodingHelperCharTest {
 	//specified prefix should correspond to number of bytes
 	//should be 3 bytes but missing a continuation byte
 	//should by 3 bytes but has an unexpected continuation byte
-	//continuation bytes are not between 0x80 and 0xbf
-	//overlong sequence with extra 0s (reject it!)
+
+	/*
+	 * Tests that the constructor (with array parameter) throws when the
+	 * byte array represents an overlong sequence (sequence is encoded in
+	 * more bytes than necessary)
+	 */
+	@Test
+	public void constructorArrayOverlongSequenceCodepointShouldThrow() {
+		try {
+				byte[] b = new byte[] {(byte)0xE0,(byte)0x91,(byte)0xB8};
+				EncodingHelperChar c = new EncodingHelperChar(b);
+				fail(
+					"Constructor didn't throw when the byte array's"
+					+ "utf8 byte sequence was an overlong sequence."
+				);
+		} catch (IllegalArgumentException e) {
+				//No action needed.
+		}
+	}
+	
 	//utf 16 surrogates
 	
 	/*
@@ -391,7 +482,7 @@ public class EncodingHelperCharTest {
 		}
 	}
 	
-	/////////////character to utf8 byte array
+	/////////////codepoint to utf8 byte array
 	//Tests that toUtf8Bytes() does not return null
 	//sevenBitCodepointShouldEncodeInOneByte
 	//two bytes
@@ -405,16 +496,17 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to generate valid UTF-8 Byte Sequence - empty", c.toUtf8String().isEmpty());
 	}
 
-	////////////character to codepoint string (U+
+	////////////codepoint to codepoint string (U+
 	//does not return null
 	//tough characters again?
 	//starts with U+
 	//no quotation marks
 	
-	///////////character to utf byte escape sequence
+	///////////codepoint to utf byte escape sequence
 	//does not return null
+	//tricky things again
 	
-	//////////character to official name of character string
-	//U+2C1F7 does not have an official name??
-	//
+	//////////codepoint to official name of character string
+	//U+2C1F7 special instructions
+	//tricky things again
 }
