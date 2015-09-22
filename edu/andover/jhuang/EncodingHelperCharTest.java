@@ -1,7 +1,14 @@
 package edu.andover.jhuang;
 
-import static org.junit.Assert.*;
+/*
+ * Tests behavior for each method and constructor in EncodingHelperChar.java
+ *
+ * Jenny Huang and Roberto Rabines
+ * COMP-630: Software Design, Instructor: Dr. Miles
+ * 22 September 2015
+ */
 
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class EncodingHelperCharTest {
@@ -47,22 +54,30 @@ public class EncodingHelperCharTest {
 	 * constructing the object
 	 */
 	@Test
-	public void getCodePoint_ShouldMatchValuePassedToConstructor() {
+	public void getCodePoint_ShouldMatchCodepointPassedToConstructorInt() {
 		int x = 0x1F1F;
 		int y = 0x1AAAA;
 		EncodingHelperChar c = new EncodingHelperChar(x);
-		EncodingHelperChar c2 = new EncodingHelperChar(y);
-		int outputCodePoint = c.getCodepoint();
-		assertEquals("Constructor has incorrect codepoint", x, outputCodePoint);
+		EncodingHelperChar d = new EncodingHelperChar(y);
+		int xOutputCodepoint = c.getCodepoint();
+		int yOutputCodepoint = d.getCodepoint();
+		assertEquals("failed to construct correctly", x, xOutputCodepoint);
+		assertEquals("failed to construct correctly", y, yOutputCodepoint);
 	}
 	
 	/*
-	 * tests that the constructor (for byte array parameter) throws when
-	 * the codepoint is invalid for a single character
+	 * tests that getCodepoint() returns the integer codepoint that
+	 * corresponds the the byte array specified when constructing
+	 * the object.
 	 */
 	@Test
-	public void constructorArrayShouldThrow() {
-		int[] b = new int[]{1,2,3,4,5};
+	public void getCodepoint_ShouldMatchCodepointPassedToConstructorArray() {
+		byte[] b = new byte[]{(byte)0xF0,(byte)0x9F,(byte)0xA0,(byte)0x80};
+		int x = 0x1F800;
+		EncodingHelperChar c = new EncodingHelperChar(b);
+		int outputCodepoint = c.getCodepoint();
+		assertEquals("failed to construct correctly", x, outputCodepoint);
+		
 	}
 
 }
