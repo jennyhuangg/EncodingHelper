@@ -29,7 +29,7 @@ public class EncodingHelperCharTest {
 	 * out of range - too large
 	 */
 	@Test 
-	public void testIllegalCharConstructorShouldThrowWhenCodepointIsTooLarge() {
+	public void testIllegalCharConstructorIntegerArgumentShouldThrowWhenCodepointIsTooLarge() {
 		try {
 				EncodingHelperChar c = new EncodingHelperChar(0x110000);
 				EncodingHelperChar c2 = new EncodingHelperChar(0x111111);
@@ -57,8 +57,8 @@ public class EncodingHelperCharTest {
 	}
 	
 	@Test
-	public void illegaljdfadfkhsalkdfahfafafdhfaldfsadfadf() {
-		
+	public void testCharConstructorArrayArgumentShouldThrowWhen() {
+		int[] b = new int[]{1,2,3,4,5};
 	}
 
 }
