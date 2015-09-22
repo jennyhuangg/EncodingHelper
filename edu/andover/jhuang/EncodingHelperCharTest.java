@@ -7,11 +7,11 @@ import org.junit.Test;
 public class EncodingHelperCharTest {
 	
 	/*
-	 * checks that the constructor throws when the input codepoint is
-	 * out of range - negative
+	 * tests that the constructor (for integer parameter) throws when
+	 * the codepoint is out of range - negative
 	 */
 	@Test
-	public void testIllegalCharConstructorShouldThrowWhenCodepointIsNegative() {
+	public void constructorIntWithNegativeCodepointShouldThrow() {
 		 try {
 			 	EncodingHelperChar c = new EncodingHelperChar(-1);
 			 	EncodingHelperChar c2 = new EncodingHelperChar(-51020);
@@ -25,11 +25,11 @@ public class EncodingHelperCharTest {
 	}
 	
 	/*
-	 * checks that the constructor throws when the input codepoint is 
-	 * out of range - too large
+	 * tests that the constructor (for integer parameter) throws when 
+	 * the codepoint is out of range - too large
 	 */
 	@Test 
-	public void testIllegalCharConstructorIntegerArgumentShouldThrowWhenCodepointIsTooLarge() {
+	public void constructorIntWithTooLargeCodepointShouldThrow() {
 		try {
 				EncodingHelperChar c = new EncodingHelperChar(0x110000);
 				EncodingHelperChar c2 = new EncodingHelperChar(0x111111);
@@ -43,11 +43,11 @@ public class EncodingHelperCharTest {
 	}
 	
 	/*
-	 * checks that getCodepoint() returns the integer codepoint specified in
+	 * tests that getCodepoint() returns the integer codepoint specified when
 	 * constructing the object
 	 */
 	@Test
-	public void testGetCodePoint_MatchesValuePassedToConstructor() {
+	public void getCodePoint_ShouldMatchValuePassedToConstructor() {
 		int x = 0x1F1F;
 		int y = 0x1AAAA;
 		EncodingHelperChar c = new EncodingHelperChar(x);
@@ -56,8 +56,12 @@ public class EncodingHelperCharTest {
 		assertEquals("Constructor has incorrect codepoint", x, outputCodePoint);
 	}
 	
+	/*
+	 * tests that the constructor (for byte array parameter) throws when
+	 * the codepoint is invalid for a single character
+	 */
 	@Test
-	public void testCharConstructorArrayArgumentShouldThrowWhen() {
+	public void constructorArrayShouldThrow() {
 		int[] b = new int[]{1,2,3,4,5};
 	}
 
