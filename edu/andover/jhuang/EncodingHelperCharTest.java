@@ -209,10 +209,13 @@ public class EncodingHelperCharTest {
 		}
 	}
 	
-	//throws when first byte of multi-byte sequence begins with "0"
+	/*
+	 * Tests that the constructor (with array parameter) throws when the first 
+	 * byte of a multi-byte sequence has a prefix of 0.
+	 */
 	@Test
-	public void constructorArrayWithIncorrectPrefixForByteSequenceShouldThrow() {
-		//arbitrary utf8 byte sequence beginning with 0 in bounds
+	public void constructorArrayWith0PrefixForByteSequenceShouldThrow() {
+		//for arbitrary utf8 byte sequence with 0  prefix in bounds
 		try {
 			byte[] b = new byte[]{(byte)0x74,(byte)0x8F,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c = new EncodingHelperChar(b);
@@ -223,7 +226,7 @@ public class EncodingHelperCharTest {
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}	
-		//lower bound of utf8 byte sequence beginning with 0
+		//for utf8 byte sequence of 0's (lower bound for those with 0 prefix)
 		try {
 			byte[] b = new byte[]{(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00};
 			EncodingHelperChar c = new EncodingHelperChar(b);
@@ -234,7 +237,7 @@ public class EncodingHelperCharTest {
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
-		//higher bound of utf8 byte sequence beginning with 0
+		//for utf8 byte sequence of 0x7F 0xBF 0xBF 0xBF (higher bound for those with 0 prefix)
 		try {
 			byte[] b = new byte[]{(byte)0x7F,(byte)0xBF,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c = new EncodingHelperChar(b);
@@ -246,21 +249,133 @@ public class EncodingHelperCharTest {
 			//No action needed.
 		}	
 	}
-
-	//first has prefix "10"
+	
+	/*
+	 * Tests that the constructor (with array parameter) throws when the first 
+	 * byte has a prefix of 10.
+	 */
+	@Test
+	public void constructorArrayWith10PrefixForByteSequenceShouldThrow() {
+		//for arbitrary utf8 byte sequence with 10 prefix in bounds
+		try {
+			byte[] b = new byte[]{(byte)0x94,(byte)0x8F,(byte)0xBF,(byte)0xBF};
+			EncodingHelperChar c = new EncodingHelperChar(b);
+			fail(
+				"Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte has a prefix of 1O."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}	
+		//for lower bound utf8 byte sequence whose first byte has 10 prefix
+		try {
+			byte[] b = new byte[]{(byte)0x80,(byte)0x00,(byte)0x00,(byte)0x00};
+			EncodingHelperChar c = new EncodingHelperChar(b);
+			fail(
+				"Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte has prefix of 1O."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+		//for higher bound utf8 byte sequence whose first byte has 10 prefix
+		try {
+			byte[] b = new byte[]{(byte)0xBF,(byte)0xBF,(byte)0xBF,(byte)0xBF};
+			EncodingHelperChar c = new EncodingHelperChar(b);
+			fail(
+				"Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte has prefix of 1O."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}	
+	}
+	// two bytes sequences
+		//first byte does not start with 110
+		//second byte does not start with 10
+	//three byte sequence
+	//continuation bytes for three bytes
+	//continuation bytes for four bytes
 	
 	//invalid continuation byte (for correct: low bound 80 high bound bf)
 	//no ff or fe
-	//bytes after the first for multiple byte sequences do not begin with 10
-	/////specified prefix should correspond to number of bytes
+
+	//specified prefix should correspond to number of bytes
 	//should be 3 bytes but missing a continuation byte
 	//should by 3 bytes but has an unexpected continuation byte
 	//continuation bytes are not between 0x80 and 0xbf
 	//overlong sequence with extra 0s (reject it!)
 	//utf 16 surrogates
 	
-	///////////// all for setCodepoint(int codepoint)
-	//makes sure codepoint works like first five tests
+	/*
+	 * The following three methods test that setCodepoint(int codepoint) 
+	 * changes the object's codepoint to the input integer.
+	 */
+	
+	//For arbitrary codepoint in bounds
+	@Test
+	public void setCodepointShouldMatchCodepointPassedToMethod() {
+		int x = 0x1F1E;
+		EncodingHelperChar c = new EncodingHelperChar(x);
+		c.setCodepoint(0x1F1F);
+		assertEquals("Failed to change codepoint correctly - 0x1F1E should become 0x1F1F",
+				x, c.getCodepoint());
+	}
+	//For codepoint of 0 (lower bound of valid codepoints)
+	@Test
+	
+	public void minCodepointShouldSetCorrectly() {
+		int x = 0x1F1E;
+		EncodingHelperChar c = new EncodingHelperChar(x);
+		c.setCodepoint(0);
+		assertEquals("Failed to change codepoint correctly - 0x1F1E should be 0",
+				x, c.getCodepoint());
+	}
+	//For codepoint of 0x10FFFF (upper bound of valid codepoints)
+	@Test
+	public void maxCodepointShouldSetCorrectly() {
+		int x = 0x10FFFF;
+		EncodingHelperChar c = new EncodingHelperChar(x);
+		c.setCodepoint(0x10FFFF);
+		assertEquals("Failed to change codepoint correctly - 0x1F1E should be 10FFFF",
+				x, c.getCodepoint());
+	}
+	
+	/*
+	 * Tests that setCodepoint(int codepoint) throws when
+	 * the codepoint is out of range - negative
+	 */
+	@Test
+	public void setCodepointForNegativeCodepointShouldThrow() {
+		 try {
+			 	EncodingHelperChar c = new EncodingHelperChar(0x1AAA);
+			 	c.setCodepoint(-1);
+		        fail(
+		        	"Set method didn't throw when the "
+		        		+ "codepoint was out of range - negative."
+		        );
+		 } catch(IllegalArgumentException expectedException) {
+		        // No action needed.
+		 }
+	}
+	
+	/*
+	 * Tests that the constructor (for integer parameter) throws when 
+	 * the codepoint is out of range - too large
+	 */
+	@Test 
+	public void setCodepointForTooLargeCodepointShouldThrow() {
+		try {
+				EncodingHelperChar c = new EncodingHelperChar(0x1AAA);
+				c.setCodepoint(0x110000);
+				fail(
+					"Set method didn't throw when the "
+					+ "codepoint was out of range - too large."
+				);
+		} catch (IllegalArgumentException e) {
+				//No action needed.
+		}
+	}
 	
 	/////////////character to utf8 byte array
 	//Tests that toUtf8Bytes() does not return null
@@ -276,7 +391,6 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to generate valid UTF-8 Byte Sequence - empty", c.toUtf8String().isEmpty());
 	}
 
-	
 	////////////character to codepoint string (U+
 	//does not return null
 	//tough characters again?
