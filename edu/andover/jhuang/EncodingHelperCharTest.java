@@ -12,13 +12,13 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class EncodingHelperCharTest {
-	
-	//check first, last, middle
-	
+
 	/*
-	 * tests that getCodepoint() returns the integer codepoint specified when
-	 * constructing the object
+	 * The following three methods test that getCodepoint() returns the integer 
+	 * codepoint specified when constructing the object
 	 */
+	
+	//for arbitrary middle codepoint int
 	@Test
 	public void getCodepoint_ShouldMatchCodepointPassedToConstructorInt() {
 		int x = 0x1F1F;
@@ -26,14 +26,18 @@ public class EncodingHelperCharTest {
 		int outputCodepoint = c.getCodepoint();
 		assertEquals("failed to construct correctly", x, outputCodepoint);
 	}
-	
-	/*
-	 * tests that the constructor with 0 parameter creates an object 
-	 * with codepoint 0
-	 */
+	//for codepoint of 0 (lower bound of valid codepoints)
 	@Test
-	public void codepoint0Shouldbe0() {
-		int x = 0x1F1F;
+	public void codepoint0ShouldBe0() {
+		int x = 0;
+		EncodingHelperChar c = new EncodingHelperChar(x);
+		int outputCodepoint = c.getCodepoint();
+		assertEquals("failed to construct correctly", x, outputCodepoint);
+	}
+	//for codepoint of 0x10FFFF (upper bound of valid codepoints)
+	@Test
+	public void codepoint0x10FFFFShouldBe0x10FFFF() {
+		int x = 0x10FFFF;
 		EncodingHelperChar c = new EncodingHelperChar(x);
 		int outputCodepoint = c.getCodepoint();
 		assertEquals("failed to construct correctly", x, outputCodepoint);
@@ -56,7 +60,6 @@ public class EncodingHelperCharTest {
 		        // No action needed.
 		 }
 	}
-	
 	/*
 	 * tests that the constructor (for integer parameter) throws when 
 	 * the codepoint is out of range - too large
@@ -76,26 +79,6 @@ public class EncodingHelperCharTest {
 	}
 	
 	/*
-	 * tests that the constructor (for integer parameter) throws when
-	 * the binary representation of the UTF-8 byte sequence for the
-	 * input codepoint starts with 1.
-	 * (codepoint is between
-	 */
-	@Test
-	public void constructorIntWithInvalidCodepointFor1ByteShouldThrow() {
-		try {
-				EncodingHelperChar c = new EncodingHelperChar(0x80);
-				EncodingHelperChar c2 = new EncodingHelperChar(0x9A);
-				EncodingHelperChar c3 = new EncodingHelperChar(0xFF);
-				fail(
-					"Constructor didn't throw when the byte sequence "
-					+ "was invalid - incorrect prefix for 1 byte sequence."
-				);
-		} catch (IllegalArgumentException e) {
-				//No action needed.
-		}
-	}
-	/*
 	 * tests that getCodepoint() returns the integer codepoint that
 	 * corresponds to the byte array specified when constructing
 	 * the object.
@@ -111,15 +94,18 @@ public class EncodingHelperCharTest {
 	
 	/*
 	 * tests that the constructor (for UTF-8 byte sequence) throws when
-	 * the binary representation of a 1 byte sequence begins with 1.
-	 * (codepoint 
+	 * the binary representation of an input 1 byte sequence begins with 1.
+	 * 
 	 */
 	@Test
 	public void constructorArrayWithIncorrectPrefixFor1ByteSequenceShouldThrow() {
 		try {
-				EncodingHelperChar c = new EncodingHelperChar(0x80);
-				EncodingHelperChar c2 = new EncodingHelperChar(0x9A);
-				EncodingHelperChar c3 = new EncodingHelperChar(0xFF);
+				byte[] b1 = {(byte)0x80}; //lower bound for invalid 1 byte
+				byte[] b2 = {(byte)0x9A}; //arbitrary middle invalid 1 byte
+				byte[] b3 = {(byte)0xFF}; //upper bound for invalid 1 byte
+				EncodingHelperChar c1 = new EncodingHelperChar(b1);
+				EncodingHelperChar c2 = new EncodingHelperChar(b2);
+				EncodingHelperChar c3 = new EncodingHelperChar(b3);
 				fail(
 					"Constructor didn't throw when the byte sequence "
 					+ "was invalid - incorrect prefix for 1 byte sequence."
