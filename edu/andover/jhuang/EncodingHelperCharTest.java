@@ -468,7 +468,7 @@ public class EncodingHelperCharTest {
 	public void toUTF8BytesShouldReturnNonEmpty() {
 		EncodingHelperChar c = new EncodingHelperChar(0x44);
 		assertFalse("Failed to generate valid UTF-8 Byte Sequence - empty", 
-				c.toUtf8String().isEmpty());
+				c.toUtf8Bytes().length == 0);
 	}
 	//Tests that toUtf8Bytes() correctly converts character to UTF-8 byte array for edge cases
 	@Test
@@ -496,7 +496,7 @@ public class EncodingHelperCharTest {
 	public void toCodepointStringShouldReturnNonEmpty() {
 		EncodingHelperChar c = new EncodingHelperChar(0x44);
 		assertFalse("Failed to generate valid U+ string - empty", 
-				c.toUtf8String().isEmpty());	
+				c.toCodepointString().isEmpty());	
 	}
 	//Tests that toCodepointString() correctly converts character to U+ string for edge cases
 	@Test
@@ -515,7 +515,6 @@ public class EncodingHelperCharTest {
 	public void toCodepointStringShouldContainUPlus() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
 		boolean startsWithUplus = c.toCodepointString().startsWith("U+");
-		
 		assertTrue("Failed to return string that starts with U+",
 				startsWithUplus);
 	}
@@ -554,7 +553,7 @@ public class EncodingHelperCharTest {
 		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
 		String expected2 = "\\0xF0\\0x9A\\0xAA\\0xAA";
 		assertEquals("Failed to correctly return character as an escaped hexadecimal"
-				+ "byte string", expected2, c2.toCodepointString());
+				+ "byte string", expected2, c2.toUtf8String());
 	}
 	@Test
 	//Tests that toUtf8String() returns string without quotation marks
@@ -587,12 +586,12 @@ public class EncodingHelperCharTest {
 		EncodingHelperChar c = new EncodingHelperChar(0xE9);
 		String expected = "LATIN SMALL LETTER E WITH ACUTE";
 		assertEquals("Failed to correctly return character's Unicode name",
-				expected, c.toUtf8String());
+				expected, c.getCharacterName());
 		//test a five digit hex codepoint
 		EncodingHelperChar c2 = new EncodingHelperChar(0x103A2);
 		String expected2 = "OLD PERSIAN SIGN U";
 		assertEquals("Failed to correctly return character's Unicode name,"
-				+ expected2, c2.toCodepointString());
+				+ expected2, c2.getCharacterName());
 	}
 	/*
 	 * Tests that if a codepoint has specified name "<control>",getCharacterName() 
