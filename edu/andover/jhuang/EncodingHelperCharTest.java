@@ -476,7 +476,7 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to generate valid UTF-8 Byte Sequence - empty", 
 				c.toUtf8String().isEmpty());
 	}
-	//Tests that toUtf8Bytes() works for edge cases (8 bits)
+	//Tests that toUtf8Bytes() works for edge case of 8 bits
 	@Test
 	public void toUTF8BytesByteArrayShouldMatchCodepoint() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
@@ -508,14 +508,16 @@ public class EncodingHelperCharTest {
 	//Tests that toCodepointString() correctly converts character to U+ string for edge cases
 	@Test
 	public void toCodepointStringShouldMatchCodepoint() {
+		//test a two digit hex codepoint
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
 		assertEquals("Failed to represent character as a U+ string", 
 				"U+00E4", c.toCodepointString());
+		//test a five digit hex codepoint
 		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
 		assertEquals("Failed to represent character as a U+ string", 
 				"U+1AAAAA", c2.toCodepointString());
 	}
-	//Tests that to CodepointString() returns string that starts with U+
+	//Tests that toCodepointString() returns string that starts with U+
 	@Test
 	public void toCodepointStringShouldContainUPlus() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
@@ -524,7 +526,7 @@ public class EncodingHelperCharTest {
 		assertTrue("Failed to return string that starts with U+",
 				startsWithUplus);
 	}
-	//Tests that to CodepointString() returns string without quotation marks
+	//Tests that toCodepointString() returns string without quotation marks
 	@Test
 	public void toCodepointStringShouldNotHaveQuotes() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
@@ -535,13 +537,67 @@ public class EncodingHelperCharTest {
 	}
 
 	///////////codepoint to utf byte escape sequence
-	//does not return null
-
 	
-	
-	//tricky things again
+	//Tests that toUtf8String() does not return null
+	@Test 
+	public void toUtf8StringShouldReturnNonNull() {
+		EncodingHelperChar c = new EncodingHelperChar(0x7E53);
+		assertNotNull("Failed to generate non-null string", c.toUtf8String());
+	}
+	//Tests that toUtf8String() does not return empty
+	@Test
+	public void toUtf8StringShouldReturnNonEmpty() {
+		EncodingHelperChar c = new EncodingHelperChar(0x44);
+		assertFalse("Failed to generate non empty string", 
+				c.toUtf8String().isEmpty());	
+	}
+	//Tests that toUtf8String() correctly converts character to the escaped hexadecimal byte string
+	@Test
+	public void toUtf8StringShouldMatchCodepoint() {
+		//test a two digit hex codepoint
+		EncodingHelperChar c = new EncodingHelperChar(0xE9);
+		String expected = "\\xC3\\xA9";
+		assertEquals("Failed to represent character as an escaped hexadecimal"
+				+ "byte string", expected, c.toUtf8String());
+		//test a five digit hex codepoint
+		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
+		String expected2 = "\\0xF0\\0x9A\\0xAA\\0xAA";
+		assertEquals("Failed to represent character as an escaped hexadecimal"
+				+ "byte string", expected2, c2.toCodepointString());
+	}
+	//Tests that toUtf8String() has correct format of backspace
 	
 	//////////codepoint to official name of character string
+	
+		//Tests that getCharacterName() does not return null
+		@Test 
+		public void getCharacterNameShouldReturnNonNull() {
+			EncodingHelperChar c = new EncodingHelperChar(0x7E53);
+			assertNotNull("Failed to generate non-null string", c.getCharacterName());
+		}
+		//Tests that getCharacterName() does not return empty
+		@Test
+		public void getCharacterNameShouldReturnNonEmpty() {
+			EncodingHelperChar c = new EncodingHelperChar(0x4453);
+			assertFalse("Failed to generate non empty string", 
+					c.getCharacterName().isEmpty());	
+		}
+		//Tests that getCharacterName() correctly converts character to the character's
+		//official Unicode name.
+		@Test
+		public void getCharacterNameShouldMatchCodepoint() {
+			//test a two digit hex codepoint
+			EncodingHelperChar c = new EncodingHelperChar(0xE9);
+			String expected = "LATIN SMALL LETTER E WITH ACUTE";
+			assertEquals("Failed to return character's Unicode name",
+					expected, c.toUtf8String());
+			//test a five digit hex codepoint
+			EncodingHelperChar c2 = new EncodingHelperChar(0x103A2);
+			String expected2 = "OLD PERSIAN SIGN U";
+			assertEquals("Failed to return character's Unicode name,"
+					+ expected2, c2.toCodepointString());
+		}
+		
 	//U+2C1F7 special instructions
 	//tricky things again
 }
