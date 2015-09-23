@@ -565,39 +565,53 @@ public class EncodingHelperCharTest {
 		assertEquals("Failed to represent character as an escaped hexadecimal"
 				+ "byte string", expected2, c2.toCodepointString());
 	}
-	//Tests that toUtf8String() has correct format of backspace
+	//Tests that toUtf8String() returns string without quotation marks
+	public void toUtf8StringShouldNotHaveQuotes() {
+		EncodingHelperChar c = new EncodingHelperChar(0xE4);
+		boolean startsWithQuote = c.toUtf8String().startsWith("\"");
+		boolean endWithQuote = c.toUtf8String().endsWith("\"");
+		assertFalse("Failed to return string without quotation marks",
+				startsWithQuote || endWithQuote);
+	}
 	
 	//////////codepoint to official name of character string
 	
-		//Tests that getCharacterName() does not return null
-		@Test 
-		public void getCharacterNameShouldReturnNonNull() {
-			EncodingHelperChar c = new EncodingHelperChar(0x7E53);
-			assertNotNull("Failed to generate non-null string", c.getCharacterName());
-		}
-		//Tests that getCharacterName() does not return empty
-		@Test
-		public void getCharacterNameShouldReturnNonEmpty() {
-			EncodingHelperChar c = new EncodingHelperChar(0x4453);
-			assertFalse("Failed to generate non empty string", 
-					c.getCharacterName().isEmpty());	
-		}
-		//Tests that getCharacterName() correctly converts character to the character's
-		//official Unicode name.
-		@Test
-		public void getCharacterNameShouldMatchCodepoint() {
-			//test a two digit hex codepoint
-			EncodingHelperChar c = new EncodingHelperChar(0xE9);
-			String expected = "LATIN SMALL LETTER E WITH ACUTE";
-			assertEquals("Failed to return character's Unicode name",
-					expected, c.toUtf8String());
-			//test a five digit hex codepoint
-			EncodingHelperChar c2 = new EncodingHelperChar(0x103A2);
-			String expected2 = "OLD PERSIAN SIGN U";
-			assertEquals("Failed to return character's Unicode name,"
-					+ expected2, c2.toCodepointString());
-		}
-		
+	//Tests that getCharacterName() does not return null
+	@Test 
+	public void getCharacterNameShouldReturnNonNull() {
+		EncodingHelperChar c = new EncodingHelperChar(0x7E53);
+		assertNotNull("Failed to generate non-null string", c.getCharacterName());
+	}
+	//Tests that getCharacterName() does not return empty
+	@Test
+	public void getCharacterNameShouldReturnNonEmpty() {
+		EncodingHelperChar c = new EncodingHelperChar(0x4453);
+		assertFalse("Failed to generate non empty string", 
+				c.getCharacterName().isEmpty());	
+	}
+	//Tests that getCharacterName() correctly converts character to the character's
+	//official Unicode name.
+	@Test
+	public void getCharacterNameShouldMatchCodepoint() {
+		//test a two digit hex codepoint
+		EncodingHelperChar c = new EncodingHelperChar(0xE9);
+		String expected = "LATIN SMALL LETTER E WITH ACUTE";
+		assertEquals("Failed to return character's Unicode name",
+				expected, c.toUtf8String());
+		//test a five digit hex codepoint
+		EncodingHelperChar c2 = new EncodingHelperChar(0x103A2);
+		String expected2 = "OLD PERSIAN SIGN U";
+		assertEquals("Failed to return character's Unicode name,"
+				+ expected2, c2.toCodepointString());
+	}
+	//Tests that getCharacterName() returns string without quotation marks
+	public void getCharacterNameShouldNotHaveQuotes() {
+		EncodingHelperChar c = new EncodingHelperChar(0xE4);
+		boolean startsWithQuote = c.getCharacterName().startsWith("\"");
+		boolean endWithQuote = c.getCharacterName().endsWith("\"");
+		assertFalse("Failed to return string without quotation marks",
+				startsWithQuote || endWithQuote);
+	}
 	//U+2C1F7 special instructions
-	//tricky things again
+	
 }
