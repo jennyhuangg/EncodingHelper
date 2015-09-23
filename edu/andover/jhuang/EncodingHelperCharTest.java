@@ -503,8 +503,6 @@ public class EncodingHelperCharTest {
 		}
 	}
 	
-	/////////////codepoint to utf8 byte array
-	
 	//Tests that toUtf8Bytes() does not return null
 	@Test
 	public void toUtf8BytesShouldReturnNonNull() {
@@ -518,21 +516,21 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to generate valid UTF-8 Byte Sequence - empty", 
 				c.toUtf8String().isEmpty());
 	}
-	//Tests that toUtf8Bytes() works for edge case of 8 bits
+	//Tests that toUtf8Bytes() works for edge cases
 	@Test
 	public void toUTF8BytesByteArrayShouldMatchCodepoint() {
+		//8 bit edge case
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
 		byte[] expected = {(byte)0xC3, (byte)0xA4};
 		assertArrayEquals("Failed to represent character as a UTF-8 Byte Array", 
 				expected, c.toUtf8Bytes());
+		//17 bit edge case
 		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
 		byte[] expected2 = {(byte)0xF0, (byte)0x9A, (byte)0xAA, (byte)0xAA};
 		assertArrayEquals("Failed to represent character as a UTF-8 Byte Array", 
 				expected2, c2.toUtf8Bytes());
 	}
 	//8, 12, 17 bit edge cases
-	
-	////////////codepoint to codepoint string (U+???)
 	
 	//Tests that toCodepointString() does not return null
 	@Test 
@@ -577,8 +575,6 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to return string without quotation marks",
 				startsWithQuote || endWithQuote);
 	}
-
-	///////////codepoint to utf byte escape sequence
 	
 	//Tests that toUtf8String() does not return null
 	@Test 
@@ -615,8 +611,6 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to return string without quotation marks",
 				startsWithQuote || endWithQuote);
 	}
-	
-	//////////codepoint to official name of character string
 	
 	//Tests that getCharacterName() does not return null
 	@Test 
