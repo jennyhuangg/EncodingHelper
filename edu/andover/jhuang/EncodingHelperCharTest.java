@@ -137,7 +137,10 @@ public class EncodingHelperCharTest {
 		}
 	}
 	
-	//input UTF-8 byte array cannot contain more than 4 bytes
+	/*
+	 * Tests that the constructor (for array parameter) throws when
+	 * the input UTF-8 byte array contains more than 4 bytes
+	 */
 	public void constructorArrayIfTooLargeShouldThrow() {
 		try {
 			byte[] b = new byte[]{(byte)0xF4,(byte)0x8F,(byte)0xBF,(byte)0xBF,
@@ -288,7 +291,11 @@ public class EncodingHelperCharTest {
 		}	
 	}
 	
-	//invalid continuation byte (correct: low bound 80 and high bound bf)
+	/*
+	 * Tests that the constructor (with array parameter) throws when the input
+	 * byte sequence includes an invalid continuation byte, or one not within 
+	 * the bounds of 0x80 and 0xbf
+	 */
 	@Test
 	public void constructorArrayWithInvalidContinuationBytesShouldThrow() {
 		try {
@@ -323,11 +330,43 @@ public class EncodingHelperCharTest {
 		}
 	}
 
-	//no ff or fe
-
-	//missing a continuation byte
+	/*
+	 * Tests that the constructor (for array parameter) throws when any byte
+	 * has the value 0xFF or 0xFE because these bytes cannot appear in a 
+	 * correct UTF-8 byte sequence
+	 */
 	@Test
-	public void constructorArrayMissingByteShouldThrow() {
+	public void constructorArrayWithImpossibleValuesShouldThrow() {
+		//for 0xFF
+		try {
+			byte[] b1 = {(byte)0xFF, (byte)0xBF}; 
+			EncodingHelperChar c1 = new EncodingHelperChar(b1);
+			fail(
+				"Constructor didn't throw when one of the bytes"
+				+ "was impossible - 0xFF."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+		//for 0xFE
+		try {
+			byte[] b2 = {(byte)0x2F, (byte)0xFE}; 
+			EncodingHelperChar c2 = new EncodingHelperChar(b2);
+			fail(
+				"Constructor didn't throw when one of the bytes"
+				+ "was impossible - 0xFE."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+	}
+	
+	/*
+	 * Tests that the constructor (with array parameter) throws when the input
+	 * byte sequence is missing a continuation byte
+	 */
+	@Test
+	public void constructorArrayByteArrayWithMissingByteShouldThrow() {
 		//prefix indicates three bytes but only has two bytes
 		try {
 			byte[] b1 = {(byte)0xEF, (byte)0xBF}; 
@@ -341,9 +380,12 @@ public class EncodingHelperCharTest {
 		}
 	}
 	
-	//extra continuation byte
+	/*
+	 * Tests that the constructor throws when the input byte sequence has 
+	 * an extra continuation byte
+	 */
 	@Test
-	public void constructorArrayWithExtraByteShouldThrow() {
+	public void constructorArrayBiteArrayWithExtraByteShouldThrow() {
 		//prefix indicates two bytes but has three bytes
 		try {
 			byte[] b1 = {(byte)0xDF, (byte)0xBF, (byte)0xBF}; 
