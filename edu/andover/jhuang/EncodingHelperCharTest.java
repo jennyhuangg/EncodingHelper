@@ -509,29 +509,35 @@ public class EncodingHelperCharTest {
 	@Test
 	public void toCodepointStringShouldMatchCodepoint() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
-		assertEquals("Failed to represent character as a UTF-8 Byte Array", 
+		assertEquals("Failed to represent character as a U+ string", 
 				"U+00E4", c.toCodepointString());
 		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
-		assertEquals("Failed to represent character as a UTF-8 Byte Array", 
+		assertEquals("Failed to represent character as a U+ string", 
 				"U+1AAAAA", c2.toCodepointString());
 	}
 	//Tests that to CodepointString() returns string that starts with U+
 	@Test
 	public void toCodepointStringShouldContainUPlus() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
-		assertEquals("Failed to start string with U+",
-				c.toCodepointString().substring(0,2),"U+");
+		boolean startsWithUplus = c.toCodepointString().startsWith("U+");
+		
+		assertTrue("Failed to return string that starts with U+",
+				startsWithUplus);
 	}
 	//Tests that to CodepointString() returns string without quotation marks
 	@Test
 	public void toCodepointStringShouldNotHaveQuotes() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
-		assertEquals("Failed to return string without quotation marks",
-				c.toCodepointString(), "\"U+00E4\"");
+		boolean startsWithQuote = c.toCodepointString().startsWith("\"");
+		boolean endWithQuote = c.toCodepointString().endsWith("\"");
+		assertFalse("Failed to return string without quotation marks",
+				startsWithQuote || endWithQuote);
 	}
 
 	///////////codepoint to utf byte escape sequence
 	//does not return null
+
+	
 	
 	//tricky things again
 	
