@@ -325,9 +325,37 @@ public class EncodingHelperCharTest {
 
 	//no ff or fe
 
-	//specified prefix should correspond to number of bytes
-	//should be 3 bytes but missing a continuation byte
-	//should by 3 bytes but has an unexpected continuation byte
+	//missing a continuation byte
+	@Test
+	public void constructorArrayMissingByteShouldThrow() {
+		//prefix indicates three bytes but only has two bytes
+		try {
+			byte[] b1 = {(byte)0xEF, (byte)0xBF}; 
+			EncodingHelperChar c1 = new EncodingHelperChar(b1);
+			fail(
+				"Constructor didn't throw when the byte sequence "
+				+ "was missing a continuation byte."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+	}
+	
+	//extra continuation byte
+	@Test
+	public void constructorArrayWithExtraByteShouldThrow() {
+		//prefix indicates two bytes but has three bytes
+		try {
+			byte[] b1 = {(byte)0xDF, (byte)0xBF, (byte)0xBF}; 
+			EncodingHelperChar c1 = new EncodingHelperChar(b1);
+			fail(
+				"Constructor didn't throw when the byte sequence "
+				+ "was missing a continuation byte."
+			);
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+	}
 
 	/*
 	 * Tests that the constructor (with array parameter) throws when the
@@ -434,18 +462,20 @@ public class EncodingHelperCharTest {
 	}
 	
 	/////////////codepoint to utf8 byte array
+	
 	//Tests that toUtf8Bytes() does not return null
-	//sevenBitCodepointShouldEncodeInOneByte
-	//two bytes
-	//three bytes
-	//four bytes
-	//8, 12, 17 bit edge cases
-	//tough characters? which are...? 1AAAA?
 	@Test
 	public void toUTFBytesShouldReturnNonEmpty() {
 		EncodingHelperChar c = new EncodingHelperChar(0x44);
 		assertFalse("Failed to generate valid UTF-8 Byte Sequence - empty", c.toUtf8String().isEmpty());
 	}
+	
+	//two bytes
+	
+	//three bytes
+	//four bytes
+	//8, 12, 17 bit edge cases
+	//tough characters? which are...? 1AAAA?
 
 	////////////codepoint to codepoint string (U+
 	//does not return null
