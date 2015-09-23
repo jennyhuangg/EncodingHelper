@@ -207,10 +207,8 @@ public class EncodingHelperCharTest {
 		try {
 			byte[] b1 = new byte[]{(byte)0x74,(byte)0x8F,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c1 = new EncodingHelperChar(b1);
-			fail(
-				"Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte of multi-byte sequence has prefix of O."
-			);
+			fail("Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte of multi-byte sequence has prefix of O.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}	
@@ -218,10 +216,8 @@ public class EncodingHelperCharTest {
 		try {
 			byte[] b2 = new byte[]{(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00};
 			EncodingHelperChar c2 = new EncodingHelperChar(b2);
-			fail(
-				"Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte of multi-byte sequence has prefix of O."
-			);
+			fail("Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte of multi-byte sequence has prefix of O.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
@@ -229,10 +225,8 @@ public class EncodingHelperCharTest {
 		try {
 			byte[] b3 = new byte[]{(byte)0x7F,(byte)0xBF,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c3 = new EncodingHelperChar(b3);
-			fail(
-				"Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte of multi-byte sequence has prefix of O."
-			);
+			fail("Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte of multi-byte sequence has prefix of O.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}	
@@ -247,35 +241,28 @@ public class EncodingHelperCharTest {
 		try {
 			byte[] b1 = new byte[]{(byte)0x94,(byte)0x8F,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c1 = new EncodingHelperChar(b1);
-			fail(
-				"Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte has a prefix of 1O."
-			);
+			fail("Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte has a prefix of 1O.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}	
 		try {
 			byte[] b2 = new byte[]{(byte)0x80,(byte)0x00,(byte)0x00,(byte)0x00};
 			EncodingHelperChar c2 = new EncodingHelperChar(b2);
-			fail(
-				"Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte has prefix of 1O."
-			);
+			fail("Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte has prefix of 1O.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
 		try {
 			byte[] b3 = new byte[]{(byte)0xBF,(byte)0xBF,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c3 = new EncodingHelperChar(b3);
-			fail(
-				"Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte has prefix of 1O."
-			);
+			fail("Constructor didn't throw when byte sequence had incorrect"
+				+ "prefix - first byte has prefix of 1O.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}	
 	}
-	
 	/*
 	 * Tests that the constructor (with array parameter) throws when the input
 	 * byte sequence includes an invalid continuation byte, or one not within 
@@ -286,35 +273,28 @@ public class EncodingHelperCharTest {
 		try {
 			byte[] b1 = {(byte)0xDF, (byte)0x7F}; //second byte prefix of 01
 			EncodingHelperChar c1 = new EncodingHelperChar(b1);
-			fail(
-				"Constructor didn't throw when the byte sequence's "
-				+ "continuation byte was invalid - prefix of not 10."
-			);
+			fail("Constructor didn't throw when the byte sequence's "
+				+ "continuation byte was invalid - prefix of not 10.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
 		try {
 			byte[] b2 = {(byte)0xDF, (byte)0x3F}; //second byte prefix of 00
 			EncodingHelperChar c2 = new EncodingHelperChar(b2);
-			fail(
-				"Constructor didn't throw when the byte sequence's "
-				+ "continuation byte was invalid - prefix not 10."
-			);
+			fail("Constructor didn't throw when the byte sequence's "
+				+ "continuation byte was invalid - prefix not 10.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
 		try {
 			byte[] b3 = {(byte)0xDF, (byte)0xF1}; //second byte prefix of 11
 			EncodingHelperChar c3 = new EncodingHelperChar(b3);
-			fail(
-				"Constructor didn't throw when the byte sequence's "
-				+ "continuation byte was invalid - prefix not 10."
-			);
+			fail("Constructor didn't throw when the byte sequence's "
+				+ "continuation byte was invalid - prefix not 10.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
 	}
-
 	/*
 	 * Tests that the constructor (for array parameter) throws when any byte
 	 * has the value 0xFF or 0xFE because these bytes cannot appear in a 
@@ -326,10 +306,8 @@ public class EncodingHelperCharTest {
 		try {
 			byte[] b1 = {(byte)0xFF, (byte)0xBF}; 
 			EncodingHelperChar c1 = new EncodingHelperChar(b1);
-			fail(
-				"Constructor didn't throw when one of the bytes"
-				+ "was impossible - 0xFF."
-			);
+			fail("Constructor didn't throw when one of the bytes"
+				+ "was impossible - 0xFF.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
@@ -337,15 +315,27 @@ public class EncodingHelperCharTest {
 		try {
 			byte[] b2 = {(byte)0x2F, (byte)0xFE}; 
 			EncodingHelperChar c2 = new EncodingHelperChar(b2);
-			fail(
-				"Constructor didn't throw when one of the bytes"
-				+ "was impossible - 0xFE."
-			);
+			fail("Constructor didn't throw when one of the bytes"
+				+ "was impossible - 0xFE.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
 	}
-	
+	/*
+	 * Tests that the constructor (with array parameter) throws when UTF-8
+	 * byte sequence are UTF-16 surrogates because they do not represent valid characters.
+	 */
+	public void constructorArrayWithUtf16SurrogatesShouldThrow() {
+		//For single UTF-16 Surrogate
+		try {
+			byte[] b1 = {(byte)0xED, (byte)0xAE, (byte)80}; 
+			EncodingHelperChar c1 = new EncodingHelperChar(b1);
+			fail("Constructor didn't throw when the byte sequence"
+				+ "was invalid - UTF-16 surrogate.");
+		} catch (IllegalArgumentException e) {
+			//No action needed.
+		}
+	}
 	/*
 	 * Tests that the constructor (with array parameter) throws when the input
 	 * byte sequence is missing a continuation byte
@@ -356,10 +346,8 @@ public class EncodingHelperCharTest {
 		try {
 			byte[] b1 = {(byte)0xEF, (byte)0xBF}; 
 			EncodingHelperChar c1 = new EncodingHelperChar(b1);
-			fail(
-				"Constructor didn't throw when the byte sequence "
-				+ "was missing a continuation byte."
-			);
+			fail("Constructor didn't throw when the byte sequence "
+				+ "was missing a continuation byte.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
@@ -375,15 +363,12 @@ public class EncodingHelperCharTest {
 		try {
 			byte[] b1 = {(byte)0xDF, (byte)0xBF, (byte)0xBF}; 
 			EncodingHelperChar c1 = new EncodingHelperChar(b1);
-			fail(
-				"Constructor didn't throw when the byte sequence "
-				+ "was missing a continuation byte."
-			);
+			fail("Constructor didn't throw when the byte sequence "
+				+ "was missing a continuation byte.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
 	}
-
 	/*
 	 * Tests that the constructor (with array parameter) throws when the
 	 * byte array represents an overlong sequence (sequence is encoded in
@@ -394,17 +379,12 @@ public class EncodingHelperCharTest {
 		try {
 				byte[] b = new byte[] {(byte)0xE0,(byte)0x91,(byte)0xB8};
 				EncodingHelperChar c = new EncodingHelperChar(b);
-				fail(
-					"Constructor didn't throw when the byte array's"
-					+ "utf8 byte sequence was an overlong sequence."
-				);
+				fail("Constructor didn't throw when the byte array's"
+					+ "utf8 byte sequence was an overlong sequence.");
 		} catch (IllegalArgumentException e) {
 				//No action needed.
 		}
 	}
-	
-	//utf 16 surrogates
-	
 	/*
 	 * Tests that getCodepoint() returns the corresponding codepoint for the
 	 * char specified when constructing the object
@@ -416,9 +396,7 @@ public class EncodingHelperCharTest {
 		EncodingHelperChar c = new EncodingHelperChar(ch);
 		assertEquals("Failed to construct correctly - 'e' should have codepoint"
 				+ "0x0065", charCodepoint, c.getCodepoint());
-		//if you have time, do lower and upper bounds too!!!
 	}
-
 	/*
 	 * The following three methods test that setCodepoint(int codepoint) 
 	 * changes the object's codepoint to the input integer.
@@ -479,7 +457,6 @@ public class EncodingHelperCharTest {
 				//No action needed.
 		}
 	}
-	
 	//Tests that toUtf8Bytes() does not return null
 	@Test
 	public void toUtf8BytesShouldReturnNonNull() {
