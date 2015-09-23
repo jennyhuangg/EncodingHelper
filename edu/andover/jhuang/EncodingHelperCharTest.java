@@ -465,26 +465,74 @@ public class EncodingHelperCharTest {
 	
 	//Tests that toUtf8Bytes() does not return null
 	@Test
-	public void toUTFBytesShouldReturnNonEmpty() {
+	public void toUtf8BytesShouldReturnNonNull() {
 		EncodingHelperChar c = new EncodingHelperChar(0x44);
-		assertFalse("Failed to generate valid UTF-8 Byte Sequence - empty", c.toUtf8String().isEmpty());
+		assertNotNull("Failed to generate non-null string", c.toUtf8Bytes());
 	}
-	
-	//two bytes
-	
-	//three bytes
-	//four bytes
+	//Tests that toUtf8Bytes() does not return empty
+	@Test
+	public void toUTF8BytesShouldReturnNonEmpty() {
+		EncodingHelperChar c = new EncodingHelperChar(0x44);
+		assertFalse("Failed to generate valid UTF-8 Byte Sequence - empty", 
+				c.toUtf8String().isEmpty());
+	}
+	//Tests that toUtf8Bytes() works for edge cases (8 bits)
+	@Test
+	public void toUTF8BytesByteArrayShouldMatchCodepoint() {
+		EncodingHelperChar c = new EncodingHelperChar(0xE4);
+		byte[] expected = {(byte)0xC3, (byte)0xA4};
+		assertArrayEquals("Failed to represent character as a UTF-8 Byte Array", 
+				expected, c.toUtf8Bytes());
+		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
+		byte[] expected2 = {(byte)0xF0, (byte)0x9A, (byte)0xAA, (byte)0xAA};
+		assertArrayEquals("Failed to represent character as a UTF-8 Byte Array", 
+				expected2, c2.toUtf8Bytes());
+	}
 	//8, 12, 17 bit edge cases
-	//tough characters? which are...? 1AAAA?
-
-	////////////codepoint to codepoint string (U+
-	//does not return null
-	//tough characters again?
-	//starts with U+
-	//no quotation marks
 	
+	////////////codepoint to codepoint string (U+???)
+	
+	//Tests that toCodepointString() does not return null
+	@Test 
+	public void toCodepointStringShouldReturnNonNull() {
+		EncodingHelperChar c = new EncodingHelperChar(0x44);
+		assertNotNull("Failed to generate non-null string", c.toCodepointString());
+	}
+	//Tests that toCodepointString() does not return empty
+	@Test
+	public void toCodepointStringShouldReturnNonEmpty() {
+		EncodingHelperChar c = new EncodingHelperChar(0x44);
+		assertFalse("Failed to generate valid U+ string - empty", 
+				c.toUtf8String().isEmpty());	
+	}
+	//Tests that toCodepointString() correctly converts character to U+ string for edge cases
+	@Test
+	public void toCodepointStringShouldMatchCodepoint() {
+		EncodingHelperChar c = new EncodingHelperChar(0xE4);
+		assertEquals("Failed to represent character as a UTF-8 Byte Array", 
+				"U+00E4", c.toCodepointString());
+		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
+		assertEquals("Failed to represent character as a UTF-8 Byte Array", 
+				"U+1AAAAA", c2.toCodepointString());
+	}
+	//Tests that to CodepointString() returns string that starts with U+
+	@Test
+	public void toCodepointStringShouldContainUPlus() {
+		EncodingHelperChar c = new EncodingHelperChar(0xE4);
+		assertEquals("Failed to start string with U+",
+				c.toCodepointString().substring(0,2),"U+");
+	}
+	//Tests that to CodepointString() returns string without quotation marks
+	@Test
+	public void toCodepointStringShouldNotHaveQuotes() {
+		EncodingHelperChar c = new EncodingHelperChar(0xE4);
+		assertEquals("Failed to return string without quotation marks",
+				c.toCodepointString(), "\"U+00E4\"");
+	}
+
 	///////////codepoint to utf byte escape sequence
 	//does not return null
+	
 	//tricky things again
 	
 	//////////codepoint to official name of character string
