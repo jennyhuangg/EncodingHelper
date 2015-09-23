@@ -450,7 +450,6 @@ public class EncodingHelperCharTest {
 	}
 	//For codepoint of 0 (lower bound of valid codepoints)
 	@Test
-	
 	public void minCodepointShouldSetCorrectly() {
 		int x = 0x1F1E;
 		EncodingHelperChar c = new EncodingHelperChar(x);
@@ -530,7 +529,6 @@ public class EncodingHelperCharTest {
 		assertArrayEquals("Failed to represent character as a UTF-8 Byte Array", 
 				expected2, c2.toUtf8Bytes());
 	}
-	//8, 12, 17 bit edge cases
 	
 	//Tests that toCodepointString() does not return null
 	@Test 
@@ -603,6 +601,7 @@ public class EncodingHelperCharTest {
 		assertEquals("Failed to represent character as an escaped hexadecimal"
 				+ "byte string", expected2, c2.toCodepointString());
 	}
+	@Test
 	//Tests that toUtf8String() returns string without quotation marks
 	public void toUtf8StringShouldNotHaveQuotes() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
@@ -641,6 +640,7 @@ public class EncodingHelperCharTest {
 				+ expected2, c2.toCodepointString());
 	}
 	//Tests that getCharacterName() returns string without quotation marks
+	@Test
 	public void getCharacterNameShouldNotHaveQuotes() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
 		boolean startsWithQuote = c.getCharacterName().startsWith("\"");
@@ -648,6 +648,15 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to return string without quotation marks",
 				startsWithQuote || endWithQuote);
 	}
-	//U+2C1F7 special instructions
+	/*
+	 * Tests that if a codepoint has specified name "<control>",getCharacterName() 
+	 * appends the more specific name from the “comment field” near the end 
+	 * of that character's row.
+	 */
+	
+	/*
+	 * Tests that if a codepoint is not defined by the table, getCharacterNAme() 
+	 * returns “<unknown>” followed by the codepoint in hexadecimal. 
+	 */
 	
 }
