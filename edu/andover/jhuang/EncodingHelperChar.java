@@ -14,28 +14,44 @@ package edu.andover.jhuang;
  * 
  * @author Jadrian Miles
  */
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+
 class EncodingHelperChar {
     private int codepoint;
     
     public EncodingHelperChar(int codepoint) {
-        // Not yet implemented.
+    	int maxCodepoint = 0x10FFFF;
+    	int minCodepoint = 0;
+    	if (codepoint > maxCodepoint)
+        	throw new IllegalArgumentException ("codepoint out of range - too large.");
+        if (codepoint < minCodepoint)
+        	throw new IllegalArgumentException ("codepoint out of range - negative");
+        this.codepoint = codepoint;
     }
     
     public EncodingHelperChar(byte[] utf8Bytes) {
-        // Not yet implemented.
+    	int l = utf8Bytes.length;
+
+        for (int k = 0; k < l; k++)
+        {
+  
+        }
+        //illegal arguments
     }
     
     public EncodingHelperChar(char ch) {
-        // Not yet implemented.
+        codepoint = (int) ch;
     }
     
     public int getCodepoint() {
-        // Not yet implemented.
-        return -1;
+        return codepoint;
     }
     
     public void setCodepoint(int codepoint) {
-        // Note yet implemented.
+        this.codepoint = codepoint;
     }
     
     /**
