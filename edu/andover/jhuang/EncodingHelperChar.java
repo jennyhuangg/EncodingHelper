@@ -32,28 +32,34 @@ class EncodingHelperChar {
         this.codepoint = codepoint;
     }
     
+    //jenny
     public EncodingHelperChar(byte[] utf8Bytes) {
     	int l = utf8Bytes.length;
-
-        for (int k = 0; k < l; k++)
-        {
-  
-        }
+    	
+    	if (l == 1) {
+    		if (utf8Bytes & )
+    	}
         //illegal arguments
     }
     
+    //roberto
     public EncodingHelperChar(char ch) {
         codepoint = (int) ch;
+        //throw illegal arguments
     }
     
+    //DONE
     public int getCodepoint() {
         return codepoint;
     }
     
+    //roberto
     public void setCodepoint(int codepoint) {
         this.codepoint = codepoint;
+        //throw illegal arguments
     }
     
+    //jenny
     /**
      * Converts this character into an array of the bytes in its UTF-8
      * representation.
@@ -68,6 +74,7 @@ class EncodingHelperChar {
         return null;
     }
     
+    //jenny
     /**
      * Generates the conventional 4-digit hexadecimal code point notation for
      * this character.
@@ -78,10 +85,15 @@ class EncodingHelperChar {
      * @return the U+ string for this character
      */
     public String toCodepointString() {
-        // Not yet implemented.
-        return "";
+    	byte[] b = this.toUtf8Bytes();
+    	int length = b.length;
+    	
+    	for (int i = 0; i < length; i++) {
+        	String.format(0x%02X, b[i]);
+    	}
     }
     
+    //roberto
     /**
      * Generates a hexadecimal representation of this character suitable for
      * pasting into a string literal in languages that support hexadecimal byte
@@ -92,6 +104,7 @@ class EncodingHelperChar {
      *
      * @return the escaped hexadecimal byte string
      */
+    //use the previous method to do this
     public String toUtf8String() {
         // Not yet implemented.
         return "";
@@ -119,23 +132,19 @@ class EncodingHelperChar {
     	    	  // do something with this
     	    	  if(data[i].equals("0000"))
     	    		  	return(data[i+1]);	
-    	    	        i++;
-    	    	        	
+    	    	        i++;   	
     	    	  }
     	    }
-    	    catch (IOException e) {
-    	    	    
+    	    catch (IOException e) {	    
     	    }
-    			
-    			
     		
         return "";
     }
     
+    //test
     public static void main(String[] args)
     {
     	EncodingHelperChar c = new EncodingHelperChar(0);
-    	
     	System.out.println(c.getCharacterName());
     }
 }
