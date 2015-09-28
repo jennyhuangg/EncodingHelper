@@ -107,6 +107,32 @@ class EncodingHelperChar {
      */
     public String getCharacterName() {
         // Not yet implemented.
+    	//Cameron's Piazza Help
+    	try {
+    	    Scanner unicodetxt = new Scanner(new File("UnicodeData.txt"));
+    	    int i = 0;
+    	    while (unicodetxt.hasNextLine()) {
+    	    	  String[] data = unicodetxt.nextLine().split(";");
+    	    	  // do something with this
+    	    	  if(data[i].equals("0000"))
+    	    		  	return(data[i+1]);	
+    	    	        i++;
+    	    	        	
+    	    	  }
+    	    }
+    	    catch (IOException e) {
+    	    	    
+    	    }
+    			
+    			
+    		
         return "";
+    }
+    
+    public static void main(String[] args)
+    {
+    	EncodingHelperChar c = new EncodingHelperChar(0);
+    	
+    	System.out.println(c.getCharacterName());
     }
 }
