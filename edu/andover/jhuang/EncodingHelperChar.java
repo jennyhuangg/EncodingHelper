@@ -108,6 +108,9 @@ class EncodingHelperChar {
     public String getCharacterName() {
         // Not yet implemented.
     	//Cameron's Piazza Help
+    	//figure out how to go from int codepoint to four/five character
+    	//string codepoint
+    	String stringCodepoint = codepoint; //insert conversion here
     	try {
     	    Scanner unicodetxt = new Scanner(new File("UnicodeData.txt"));
     	    int i = 0;
