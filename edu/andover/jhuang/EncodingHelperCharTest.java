@@ -95,11 +95,11 @@ public class EncodingHelperCharTest {
 	//For byte array with 0s (lower bound of valid byte arrays)
 	@Test
 	public void minByteArrayShouldBeAccepted() {
-		byte[] b = new byte[]{(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00};
+		byte[] b = new byte[]{(byte)0x00};
 		int x = 0;
 		EncodingHelperChar c = new EncodingHelperChar(b);
 		int outputCodepoint = c.getCodepoint();
-		assertEquals("Failed to construct correctly - 0x00 0x00 0x00 0x00"
+		assertEquals("Failed to construct correctly - 0x00"
 				+ "should have codepoint 0", x, outputCodepoint);
 	}
 	//For byte array with 0xF4 0x8F 0xBF 0xBF (upper bound of valid byte arrays)
@@ -358,7 +358,7 @@ public class EncodingHelperCharTest {
 	 * an extra continuation byte
 	 */
 	@Test
-	public void constructorArrayBiteArrayWithExtraByteShouldThrow() {
+	public void constructorArrayByteArrayWithExtraByteShouldThrow() {
 		//prefix indicates two bytes but has three bytes
 		try {
 			byte[] b1 = {(byte)0xDF, (byte)0xBF, (byte)0xBF}; 
@@ -508,7 +508,7 @@ public class EncodingHelperCharTest {
 		//test a five digit hex codepoint
 		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
 		assertEquals("Failed to correctly return character as a U+ string", 
-				"U+1AAAAA", c2.toCodepointString());
+				"U+1AAAA", c2.toCodepointString());
 	}
 	//Tests that toCodepointString() returns string that starts with U+
 	@Test
