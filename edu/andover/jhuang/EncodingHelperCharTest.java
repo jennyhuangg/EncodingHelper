@@ -557,8 +557,8 @@ public class EncodingHelperCharTest {
 		assertEquals("Failed to correctly return character as an escaped hexadecimal"
 				+ "byte string", expected2, c2.toUtf8String());
 	}
-	@Test
 	//Tests that toUtf8String() returns string without quotation marks
+	@Test
 	public void toUtf8StringShouldNotHaveQuotes() {
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
 		boolean startsWithQuote = c.toUtf8String().startsWith("\"");
@@ -592,8 +592,8 @@ public class EncodingHelperCharTest {
 		//test a five digit hex codepoint
 		EncodingHelperChar c2 = new EncodingHelperChar(0x103A2);
 		String expected2 = "OLD PERSIAN SIGN U";
-		assertEquals("Failed to correctly return character's Unicode name,"
-				+ expected2, c2.getCharacterName());
+		assertEquals("Failed to correctly return character's Unicode name", 
+				expected2, c2.getCharacterName());
 	}
 	/*
 	 * Tests that if a codepoint has specified name "<control>",getCharacterName() 
