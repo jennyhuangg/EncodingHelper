@@ -15,6 +15,15 @@ package edu.andover.jhuang;
  * @author Jadrian Miles
  */
 
+/*
+ * Implemented all the methods defined and matched the specifications given
+ * in the Javadoc comments in EncodingHelperChar.java
+ *
+ * Jenny Huang and Roberto Rabines
+ * COMP-630: Software Design, Instructor: Dr. Miles
+ * 29 September 2015
+ */
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -22,7 +31,6 @@ import java.util.Scanner;
 class EncodingHelperChar {
     private int codepoint;
    
-    //jenny DONE
     public EncodingHelperChar(int codepoint) {
     	int maxCodepoint = 0x10FFFF;
     	int minCodepoint = 0;
@@ -38,20 +46,21 @@ class EncodingHelperChar {
         this.codepoint = codepoint;
     }
     
-    //jenny DONE
     public EncodingHelperChar(byte[] utf8Bytes) {
     	int numBytes = utf8Bytes.length;
     	
-    	//one byte sequence
+    	//empty array
     	if (numBytes == 0) {
     		throw new IllegalArgumentException ("byte array is empty");
     	}
+    	//one byte sequence
     	else if (numBytes == 1) {
-    		//if first bit is 0 and succeeding bits have prefix 10
+    		//if first bit is 0
     		boolean isByte1Prefix0 = (byte)(utf8Bytes[0] & 0x80) == (byte)0;
     		if (isByte1Prefix0) { 
     			codepoint = utf8Bytes[0]; 
     		}
+    		//if first bit is not 0
     		else {
     			throw new IllegalArgumentException ("one byte sequence does not"
     					+ " begin with 0");
@@ -59,6 +68,7 @@ class EncodingHelperChar {
     	}
     	//two byte sequence
     	else if (numBytes == 2) {
+    		//checks that the continuation bytes have correct prefix 10
     		for (int i = 1; i < numBytes; i++)
     		{
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
@@ -73,6 +83,7 @@ class EncodingHelperChar {
     			int a = (utf8Bytes[1] & 0x3F); 
     			//turns 110 prefix into 000 for 1st byte
     			int b = (utf8Bytes[0] & 0x1F); 
+    			//codepoint if not illegal argument
     			int potentialCodepoint = (b<<6) + a;
     			int minCodepoint = 0x80;
     			if (potentialCodepoint <= minCodepoint)
@@ -165,24 +176,27 @@ class EncodingHelperChar {
         			+ "UTF-16 surrogate");
     }
     
-    //roberto
     public EncodingHelperChar(char ch) {
         codepoint = (int) ch;
-        //throw illegal arguments
     }
     
     public int getCodepoint() {
         return codepoint;
     }
     
-    //roberto
     public void setCodepoint(int codepoint) {
+    	int maxCodepoint = 0x10FFFF;
+    	int minCodepoint = 0;
+    	if (codepoint > maxCodepoint)
+        	throw new IllegalArgumentException ("codepoint out of range"
+        			+ " - too large");
+        if (codepoint < minCodepoint)
+        	throw new IllegalArgumentException ("codepoint out of range"
+        			+ " - negative");
+        if (codepoint >= 0xD800 && codepoint <= 0xDFFF)
+        	throw new IllegalArgumentException ("invalid codepoint - "
+        			+ "UTF-16 surrogate");
         this.codepoint = codepoint;
-        //throw illegal arguments
-        /*if()
-        {	
-        	throw new IllegalArguementException("")	
-        }*/
     }
 
     /**
@@ -195,9 +209,6 @@ class EncodingHelperChar {
      * @return the UTF-8 byte array for this character
      */
     public byte[] toUtf8Bytes() {
-    	//go from codepoint to utf8 bytes
-    	//use stress test numbers
-    	
     	//1 byte long
     	if (this.codepoint >= 0 && this.codepoint <= 0x7F) {
     		byte[] utf8Bytes = new byte[] {(byte)codepoint};
@@ -299,7 +310,7 @@ class EncodingHelperChar {
      *
      * @return this character's Unicode name
      */
-	//Used Cameron's Piazza Post Help
+	//help from cam's piazza post
     public String getCharacterName() {
     	//removes "U+" in the beginning
     	String fourDigitHexCodepoint = this.toCodepointString().substring(2);
@@ -323,20 +334,5 @@ class EncodingHelperChar {
     	}
     	//if not in UnicodeData.txt (undefined)
     	return "<unknown> " + this.toCodepointString();
-    }
-    public static void main(String[] args)
-    {
-		EncodingHelperChar c = new EncodingHelperChar(0x1AAAA);
-		String expected = "\\xC3\\xA9";
-		byte[] b = c.toUtf8Bytes();
-		for (int k = 0; k < b.length; k++) 
-		{
-			System.out.println(String.format("0x%02X", b[k]));
-		}
-		
-		System.out.println(c.toUtf8String());
-		byte[] expected2 = {(byte)0xC3, (byte)0xA4};
-
-
     }
 }
