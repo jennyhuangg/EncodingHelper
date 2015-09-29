@@ -21,7 +21,8 @@ import java.util.Scanner;
 
 class EncodingHelperChar {
     private int codepoint;
-    
+   
+    //jenny DONE
     public EncodingHelperChar(int codepoint) {
     	int maxCodepoint = 0x10FFFF;
     	int minCodepoint = 0;
@@ -31,14 +32,17 @@ class EncodingHelperChar {
         if (codepoint < minCodepoint)
         	throw new IllegalArgumentException ("codepoint out of range"
         			+ " - negative");
+        if (codepoint >= 0xD800 && codepoint <= 0xDFFF)
+        	throw new IllegalArgumentException ("invalid codepoint - "
+        			+ "UTF-16 surrogate");
         this.codepoint = codepoint;
     }
     
-    //jenny HALP
-    //overlong sequence??
+    //jenny DONE
     public EncodingHelperChar(byte[] utf8Bytes) {
     	int numBytes = utf8Bytes.length;
     	
+    	//one byte sequence
     	if (numBytes == 0) {
     		throw new IllegalArgumentException ("byte array is empty");
     	}
@@ -53,72 +57,76 @@ class EncodingHelperChar {
     					+ " begin with 0");
     		}
     	}
+    	//two byte sequence
     	else if (numBytes == 2) {
-    		boolean isByte1Prefix110 = (byte)(utf8Bytes[0] & 0xE0) == (byte)0xC0;
     		for (int i = 1; i < numBytes; i++)
     		{
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
     				throw new IllegalArgumentException("continuation byte does"
     						+ " not have prefix 10");
     		}
+    		boolean isByte1Prefix110 = (byte)(utf8Bytes[0] & 0xE0) == (byte)0xC0;
     		//if first three bits are 110
     		if (isByte1Prefix110) { 
     			//turns 10 prefix into 0 for 2nd byte
-    			int a = (byte)(utf8Bytes[1] & 0x3F); 
+    			int a = (utf8Bytes[1] & 0x3F); 
     			//turns 110 prefix into 000 for 1st byte
-    			int b = (byte)(utf8Bytes[0] & 0x1F); 
+    			int b = (utf8Bytes[0] & 0x1F); 
     			int potentialCodepoint = (b<<6) + a;
-    			int maxCodepoint = 0x10FFFF;
-    			if (potentialCodepoint <= maxCodepoint)
-    				codepoint = potentialCodepoint; 
+    			int minCodepoint = 0x80;
+    			if (potentialCodepoint <= minCodepoint)
+    				throw new IllegalArgumentException("overlong sequence");
     			else
-    				throw new IllegalArgumentException("codepoint out of range"
-    						+ "  - too large");
+    				codepoint = potentialCodepoint; 
     		}
+    		//if first three bits are not 110
     		else {
     			throw new IllegalArgumentException ("two byte sequence does not"
     					+ " begin with 110");
     		}
     	}
+    	//three byte sequence
     	else if (numBytes == 3) {
-    		boolean isByte1Prefix1110 = (byte)(utf8Bytes[0] & 0xF0) == (byte)0xE0;
+    		//checks that the continuation bytes have correct prefix 10
     		for (int i = 1; i < numBytes; i++)
     		{
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
     				throw new IllegalArgumentException("continuation byte does"
     						+ " not have prefix 10");
     		}
+    		boolean isByte1Prefix1110 = (byte)(utf8Bytes[0] & 0xF0) == (byte)0xE0;
     		//if first four bits are 1110
     		if (isByte1Prefix1110) { 
     			//turns 10 prefix into 00 for 3rd byte
-    			int a = (byte)(utf8Bytes[2] & 0x3F); 
+    			int a = (utf8Bytes[2] & 0x3F); 
     			//turns 10 prefix into 00 for 2nd byte
-    			int b = (byte)(utf8Bytes[1] & 0x3F);
+    			int b = (utf8Bytes[1] & 0x3F);
     			//turns 1110 prefix into 0000 for 1st byte
-    			int c = (byte)(utf8Bytes[0] & 0x0F); 
+    			int c = (utf8Bytes[0] & 0x0F); 
     			//cam helped me understand why I should use parentheses
     			int potentialCodepoint = (c<<12) + (b<<6) + a; 
-    			int maxCodepoint = 0x10FFFF;
-    			if (potentialCodepoint <= maxCodepoint)
-    				codepoint = potentialCodepoint; 
-
+    			int minCodepoint = 0x800;
+    			if (potentialCodepoint <= minCodepoint)
+    				throw new IllegalArgumentException("overlong sequence");
     			else
-    				throw new IllegalArgumentException("codepoint out of range"
-    						+ "  - too large");
+    				codepoint = potentialCodepoint; 
     		}
+    		//if first four bits are not 1110
     		else {
     			throw new IllegalArgumentException ("two byte sequence does "
     					+ "not begin with 110");
     		}
     	}
+    	//four byte sequence
     	else if (numBytes == 4) {
+    		//checks that continuation bytes have correct prefix 10
     		for (int i = 1; i < numBytes; i++)
     		{
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
     				throw new IllegalArgumentException("continuation byte does"
     						+ " not have prefix 10");
     		}
-    		boolean isByte1Prefix11110 = (utf8Bytes[0] & 0xF8) == (byte)0xF0;
+    		boolean isByte1Prefix11110 = (byte)(utf8Bytes[0] & 0xF8) == (byte)0xF0;
     		//if first five bits are 11110
     		if (isByte1Prefix11110) { 
     			//turns 10 prefix into 00 for 4th byte
@@ -131,19 +139,27 @@ class EncodingHelperChar {
     			int d = utf8Bytes[0] & 0x07; 
     			int potentialCodepoint = (d<<18) + (c<<12) + (b<<6) + a;
     			int maxCodepoint = 0x10FFFF;
-    			if (potentialCodepoint <= maxCodepoint)
-    				codepoint = potentialCodepoint; 
-    			else
+    			int minCodepoint = 0x10000; 
+    			if (potentialCodepoint > maxCodepoint)
     				throw new IllegalArgumentException("codepoint out of range"
-    						+ "  - too large");
+    						+ " - too large");
+    			if (potentialCodepoint < minCodepoint)
+    				throw new IllegalArgumentException("overlong sequence");
+    			else
+    				codepoint = potentialCodepoint; 
     		}
+    		//if first five bits are not 11110
     		else {
     			throw new IllegalArgumentException ("two byte sequence does not"
     					+ " begin with 110");
     		}
     	}
+    	//longer than four byte sequence
     	else
     		throw new IllegalArgumentException ("Byte array is too long");
+        if (codepoint >= 0xD800 && codepoint <= 0xDFFF)
+        	throw new IllegalArgumentException ("invalid codepoint - "
+        			+ "UTF-16 surrogate");
     }
     
     //roberto
@@ -167,7 +183,7 @@ class EncodingHelperChar {
         }*/
     }
     
-    //jenny HAL
+    //jenny HALP
     /**
      * Converts this character into an array of the bytes in its UTF-8
      * representation.
@@ -268,6 +284,7 @@ class EncodingHelperChar {
     	    	        i++;   	
     	    	  }
     	    }
+    	//dont forget undefined behavior
     	    catch (IOException e) {	
     	    	return ""; //what to do hereeeee
     	    }
