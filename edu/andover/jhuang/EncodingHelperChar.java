@@ -57,6 +57,10 @@ class EncodingHelperChar {
     public void setCodepoint(int codepoint) {
         this.codepoint = codepoint;
         //throw illegal arguments
+        if()
+        {	
+        	throw new IllegalArguementException("")	
+        }
     }
     
     //jenny
@@ -107,6 +111,13 @@ class EncodingHelperChar {
     //use the previous method to do this
     public String toUtf8String() {
         // Not yet implemented.
+    	String s = "";
+    	byte[] b = this.toUtf8Bytes();
+    	//bytetohexstring
+    	for(int i = 0;i < b.length;i++)
+    	{   
+    	    s += "\\x" + String.format("0x%02x", b[i]);
+    	}
         return "";
     }
     
@@ -123,7 +134,7 @@ class EncodingHelperChar {
     	//Cameron's Piazza Help
     	//figure out how to go from int codepoint to four/five character
     	//string codepoint
-    	String stringCodepoint = codepoint; //insert conversion here
+    	//String stringCodepoint = codepoint; //insert conversion here
     	try {
     	    Scanner unicodetxt = new Scanner(new File("UnicodeData.txt"));
     	    int i = 0;
@@ -142,9 +153,10 @@ class EncodingHelperChar {
     }
     
     //test
-    public static void main(String[] args)
+   /* public static void main(String[] args)
     {
     	EncodingHelperChar c = new EncodingHelperChar(0);
     	System.out.println(c.getCharacterName());
     }
+    */
 }
