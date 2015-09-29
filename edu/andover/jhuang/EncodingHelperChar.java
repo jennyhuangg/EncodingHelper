@@ -171,7 +171,8 @@ class EncodingHelperChar {
     	//longer than four byte sequence
     	else
     		throw new IllegalArgumentException ("Byte array is too long");
-        if (codepoint >= 0xD800 && codepoint <= 0xDFFF)
+       
+    	if (codepoint >= 0xD800 && codepoint <= 0xDFFF)
         	throw new IllegalArgumentException ("invalid codepoint - "
         			+ "UTF-16 surrogate");
     }
