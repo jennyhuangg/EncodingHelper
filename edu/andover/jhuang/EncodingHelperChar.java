@@ -26,7 +26,7 @@ class EncodingHelperChar {
     	int maxCodepoint = 0x10FFFF;
     	int minCodepoint = 0;
     	if (codepoint > maxCodepoint)
-        	throw new IllegalArgumentException ("codepoint out of range - too large.");
+        	throw new IllegalArgumentException ("codepoint out of range - too large");
         if (codepoint < minCodepoint)
         	throw new IllegalArgumentException ("codepoint out of range - negative");
         this.codepoint = codepoint;
@@ -35,11 +35,45 @@ class EncodingHelperChar {
     //jenny
     public EncodingHelperChar(byte[] utf8Bytes) {
     	int l = utf8Bytes.length;
-    	
-    	if (l == 1) {
-    		if (utf8Bytes & )
+    	//convert byte sequence to codepoint
+    	//do this by removing prefixes from codepoints
+    	if (l == 0) {
+    		throw new IllegalArgumentException ("byte array is empty");
     	}
-        //illegal arguments
+    	else if (l == 1) {
+    		if ((byte)(utf8Bytes[0] & 0x80) == (byte)0) {
+    			
+    		}
+    		else {
+    			throw new IllegalArgumentException ("one byte sequence does not begin with 0");
+    		}
+    	}
+    	else if (l == 2) {
+    		if ((byte)(utf8Bytes[0] & 0xE0) == (byte)0xC0) {
+    			
+    		}
+    		else {
+    			throw new IllegalArgumentException ("two byte sequence does not begin with 110");
+    		}
+    	}
+    	else if (l == 3) {
+    		if ((byte)(utf8Bytes[0] & 0xF0) == (byte)0xE0) {
+    			
+    		}
+    		else {
+    			throw new IllegalArgumentException ("two byte sequence does not begin with 110");
+    		}
+    	}
+    	else if (l == 4) {
+    		if ((byte)(utf8Bytes[0] & 0xF8) == (byte)0xF0) {
+    			
+    		}
+    		else {
+    			throw new IllegalArgumentException ("two byte sequence does not begin with 110");
+    		}
+    	}
+    	else
+    		throw new IllegalArgumentException ("Byte array is too big");
     }
     
     //roberto
@@ -86,11 +120,14 @@ class EncodingHelperChar {
      */
     public String toCodepointString() {
     	byte[] b = this.toUtf8Bytes();
+    	//convert utf 8 byte array into a byte array for the codepoint
+    	//convert byte array to codepoint by every four --> one digit
+    	//turn into a string
     	int length = b.length;
     	
-    	for (int i = 0; i < length; i++) {
-        	String.format(0x%02X, b[i]);
-    	}
+    	//for (int i = 0; i < length; i++) {
+        	//byteToHexString(b[i]);
+    	//}
     }
     
     //roberto
@@ -104,12 +141,12 @@ class EncodingHelperChar {
      *
      * @return the escaped hexadecimal byte string
      */
-    //use the previous method to do this
+    //use the previous method to do this and play around with string
     public String toUtf8String() {
-        // Not yet implemented.
         return "";
     }
     
+    //jenny 
     /**
      * Generates the official Unicode name for this character.
      *   For example, if this character is a lower-case letter e with an acute
