@@ -1,5 +1,7 @@
 package edu.andover.jhuang;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * The main model class for the EncodingHelper project in Software Design,
  * Fall 2015, Phillips Academy.
@@ -260,7 +262,7 @@ class EncodingHelperChar {
         return "";
     }
     
-    //jenny HALP
+    //jenny DONE
     /**
      * Generates the official Unicode name for this character.
      *   For example, if this character is a lower-case letter e with an acute
@@ -273,40 +275,38 @@ class EncodingHelperChar {
     	//Cameron's Piazza Help
     	String a = this.toCodepointString().substring(2);
     	try {
-    	    Scanner unicodetxt = new Scanner(new File("UnicodeData.txt"));
-    	    int i = 0;
+    	    Scanner unicodetxt = new Scanner(new File("src/edu/andover/jhuang/"
+    	    		+ "UnicodeData.txt"));
     	    while (unicodetxt.hasNextLine()) {
-    	    	//numbers repeat in file and what am i doing wrong
     	    	  String[] data = unicodetxt.nextLine().split(";"); 
-    	    	  if(data[i].equals(a))
-    	    		  	return data[i+1];	
-    	    	  else
-    	    	        i++;   	
+    	    	  if(data[0].equals(a)) {
+    	    		  if (data[1].equals("<control>"))
+    	    			  return data[1] + " " + data[10];
+    	    		  else
+    	    			  return data[1];
     	    	  }
     	    }
-    	//dont forget undefined behavior
-    	    catch (IOException e) {	
-    	    	return ""; //what to do hereeeee
-    	    }
-    	return "";
+    	}
+    	catch (IOException e) {	
+    	    	System.out.println("File Read Error");
+    	}
+    	return "<unknown> " + this.toCodepointString();
     }
     
     public static void main(String[] args)
     {
-    	byte[] a = new byte[] {(byte)0xF4,(byte)0x9F,(byte)0xBF,(byte)0xBF};
-		//corresponding codepoint is U+110000
-		EncodingHelperChar d = new EncodingHelperChar(a);
-		System.out.println(d.getCodepoint());
-    	
-    	byte[] b = new byte[]{(byte)0xF4,(byte)0x8F,(byte)0xBF,(byte)0xBF};
-		int x = 0x10FFFF;
-		EncodingHelperChar c = new EncodingHelperChar(b);
-		System.out.println(c.getCodepoint());
+		EncodingHelperChar c2 = new EncodingHelperChar(0x171);
+		System.out.println(c2.getCharacterName());
 		
-		EncodingHelperChar p = new EncodingHelperChar(0x10FFFF);
-		System.out.println(p.getCodepoint());
+		EncodingHelperChar c3 = new EncodingHelperChar(0x4235);
+		String expected = "<unknown> U+4235";
+		System.out.println(expected.equals(c3.getCharacterName()));
+		System.out.println(c3.getCharacterName());
 		
-		EncodingHelperChar w = new EncodingHelperChar(0xE4);
-		System.out.println(w.toCodepointString().substring(2));
+		EncodingHelperChar c4 = new EncodingHelperChar(0x0007);
+		String expected2 = "<control> BELL";
+		System.out.println(expected2.equals(c4.getCharacterName()));
+		System.out.println(c4.getCharacterName());
+		
     }
 }
