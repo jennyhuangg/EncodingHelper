@@ -126,8 +126,8 @@ class EncodingHelperChar {
     		}
     		//if first four bits are not 1110
     		else {
-    			throw new IllegalArgumentException ("two byte sequence does "
-    					+ "not begin with 110");
+    			throw new IllegalArgumentException ("three byte sequence does "
+    					+ "not begin with 1110");
     		}
     	}
     	//four byte sequence
@@ -164,8 +164,8 @@ class EncodingHelperChar {
     		}
     		//if first five bits are not 11110
     		else {
-    			throw new IllegalArgumentException ("two byte sequence does not"
-    					+ " begin with 110");
+    			throw new IllegalArgumentException ("four byte sequence does "
+    					+ "not begin with 11110");
     		}
     	}
     	//longer than four byte sequence
