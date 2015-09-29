@@ -553,7 +553,7 @@ public class EncodingHelperCharTest {
 				+ "byte string", expected, c.toUtf8String());
 		//test a five digit hex codepoint
 		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
-		String expected2 = "\\0xF0\\0x9A\\0xAA\\0xAA";
+		String expected2 = "\\xF0\\x9A\\xAA\\xAA";
 		assertEquals("Failed to correctly return character as an escaped hexadecimal"
 				+ "byte string", expected2, c2.toUtf8String());
 	}
