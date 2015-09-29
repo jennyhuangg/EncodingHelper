@@ -34,46 +34,84 @@ class EncodingHelperChar {
     
     //jenny
     public EncodingHelperChar(byte[] utf8Bytes) {
-    	int l = utf8Bytes.length;
-    	//convert byte sequence to codepoint
-    	//do this by removing prefixes from codepoints
-    	if (l == 0) {
+    	int numBytes = utf8Bytes.length;
+    	
+    	if (numBytes == 0) {
     		throw new IllegalArgumentException ("byte array is empty");
     	}
-    	else if (l == 1) {
-    		if ((byte)(utf8Bytes[0] & 0x80) == (byte)0) {
-    			
+    	else if (numBytes == 1) {
+    		//if first bit is 0 and succeeding bits have prefix 10
+    		boolean isByte1Prefix0 = (byte)(utf8Bytes[0] & 0x80) == (byte)0;
+    		if (isByte1Prefix0) { 
+    			codepoint = utf8Bytes[0]; 
     		}
     		else {
     			throw new IllegalArgumentException ("one byte sequence does not begin with 0");
     		}
     	}
-    	else if (l == 2) {
-    		if ((byte)(utf8Bytes[0] & 0xE0) == (byte)0xC0) {
-    			
+    	else if (numBytes == 2) {
+    		boolean isByte1Prefix110 = (byte)(utf8Bytes[0] & 0xE0) == (byte)0xC0;
+    		for (int i = 1; i < numBytes; i++)
+    		{
+    			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
+    				throw new IllegalArgumentException("continuation byte does not have prefix 10");
+    		}
+    		if (isByte1Prefix110) { //if first three bits are 110
+    			int a = (byte)(utf8Bytes[1] & 0x3F); //turns 10 prefix into 0 for 2nd byte
+    			int b = (byte)(utf8Bytes[0] & 0x1F); //turns 110 prefix into 000 for 1st byte
+    			if (b<<6 + a <= 0x10FFFF)
+    				codepoint = b<<6 + a; 
+    			else
+    				throw new IllegalArgumentException("codepoint out of range  - too large");
     		}
     		else {
     			throw new IllegalArgumentException ("two byte sequence does not begin with 110");
     		}
     	}
-    	else if (l == 3) {
-    		if ((byte)(utf8Bytes[0] & 0xF0) == (byte)0xE0) {
-    			
+    	else if (numBytes == 3) {
+    		boolean isByte1Prefix1110 = (byte)(utf8Bytes[0] & 0xF0) == (byte)0xE0;
+    		for (int i = 1; i < numBytes; i++)
+    		{
+    			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
+    				throw new IllegalArgumentException("continuation byte does not have prefix 10");
+    		}
+    		if (isByte1Prefix1110) { //if first four bits are 1110
+    			int a = (byte)(utf8Bytes[2] & 0x3F); //turns 10 prefix into 00 for 3rd byte
+    			int b = (byte)(utf8Bytes[1] & 0x3F); //turns 10 prefix into 00 for 2nd byte
+    			int c = (byte)(utf8Bytes[0] & 0x0F); //turns 1110 prefix into 0000 for 1st byte
+    			if (c<<12 + b<<6 + a <= 0x10FFFF)
+    				codepoint = c<<12 + b<<6 + a; 
+    			else
+    				throw new IllegalArgumentException("codepoint out of range  - too large");
     		}
     		else {
     			throw new IllegalArgumentException ("two byte sequence does not begin with 110");
     		}
     	}
-    	else if (l == 4) {
-    		if ((byte)(utf8Bytes[0] & 0xF8) == (byte)0xF0) {
-    			
+    	else if (numBytes == 4) {
+    		for (int i = 1; i < numBytes; i++)
+    		{
+    			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
+    				throw new IllegalArgumentException("continuation byte does not have prefix 10");
+    		}
+    		boolean isByte1Prefix11110 = (byte)(utf8Bytes[0] & 0xF8) == (byte)0xF0;
+    		if (isByte1Prefix11110) { //if first five bits are 11110
+    			int a = (byte)(utf8Bytes[3] & 0x3F); //turns 10 prefix into 00 for 4th byte
+    			int b = (byte)(utf8Bytes[2] & 0x3F); //turns 10 prefix into 00 for 3rd byte
+    			int c = (byte)(utf8Bytes[1] & 0x3F); //turns 10 prefix into 00 for 2nd byte
+    			int d = (byte)(utf8Bytes[0] & 0x07); //turns 11110 prefix into 00000 for 1st byte
+    			if (d<<18 + c<<12 + b<<6 + a > 0x10FFFF)
+    				throw new IllegalArgumentException("codepoint out of range  - too large");
+    			else
+    				codepoint = d<<18 + c<<12 + b<<6 + a;
+
     		}
     		else {
     			throw new IllegalArgumentException ("two byte sequence does not begin with 110");
     		}
     	}
     	else
-    		throw new IllegalArgumentException ("Byte array is too big");
+    		throw new IllegalArgumentException ("Byte array is too long");
     }
     
     //roberto
@@ -91,6 +129,10 @@ class EncodingHelperChar {
     public void setCodepoint(int codepoint) {
         this.codepoint = codepoint;
         //throw illegal arguments
+        /*if()
+        {	
+        	throw new IllegalArguementException("")	
+        }*/
     }
     
     //jenny
@@ -128,6 +170,7 @@ class EncodingHelperChar {
     	//for (int i = 0; i < length; i++) {
         	//byteToHexString(b[i]);
     	//}
+    	return "";
     }
     
     //roberto
@@ -143,6 +186,13 @@ class EncodingHelperChar {
      */
     //use the previous method to do this and play around with string
     public String toUtf8String() {
+    	String s = "";
+    	byte[] b = this.toUtf8Bytes();
+    	//bytetohexstring
+    	for(int i = 0;i < b.length;i++)
+    	{   
+    	    s += "\\x" + String.format("0x%02x", b[i]);
+    	}
         return "";
     }
     
@@ -160,7 +210,7 @@ class EncodingHelperChar {
     	//Cameron's Piazza Help
     	//figure out how to go from int codepoint to four/five character
     	//string codepoint
-    	String stringCodepoint = codepoint; //insert conversion here
+    	//String stringCodepoint = codepoint; //insert conversion here
     	try {
     	    Scanner unicodetxt = new Scanner(new File("UnicodeData.txt"));
     	    int i = 0;
@@ -178,10 +228,22 @@ class EncodingHelperChar {
         return "";
     }
     
-    //test
     public static void main(String[] args)
+    {
+    	byte[] a = new byte[] {(byte)0xF4,(byte)0x9F,(byte)0xBF,(byte)0xBF};
+		//corresponding codepoint is U+110000
+		EncodingHelperChar d = new EncodingHelperChar(a);
+		System.out.println(d.getCodepoint());
+    	byte[] b = new byte[]{(byte)0xF4,(byte)0x8F,(byte)0xBF,(byte)0xBF};
+		int x = 0x10FFFF;
+		EncodingHelperChar c = new EncodingHelperChar(b);
+		System.out.println(c.getCodepoint());
+    }
+    //test
+   /* public static void main(String[] args)
     {
     	EncodingHelperChar c = new EncodingHelperChar(0);
     	System.out.println(c.getCharacterName());
     }
+    */
 }
