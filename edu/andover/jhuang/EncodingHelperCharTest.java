@@ -136,6 +136,7 @@ public class EncodingHelperCharTest {
 	 * Tests that the constructor (for array parameter) throws when
 	 * the input UTF-8 byte array contains more than 4 bytes
 	 */
+	@Test
 	public void constructorArrayIfTooLargeShouldThrow() {
 		try {
 			byte[] b = new byte[]{(byte)0xF4,(byte)0x8F,(byte)0xBF,(byte)0xBF,
@@ -325,6 +326,7 @@ public class EncodingHelperCharTest {
 	 * Tests that the constructor (with array parameter) throws when UTF-8
 	 * byte sequence are UTF-16 surrogates because they do not represent valid characters.
 	 */
+	@Test
 	public void constructorArrayWithUtf16SurrogatesShouldThrow() {
 		//For single UTF-16 Surrogate
 		try {
