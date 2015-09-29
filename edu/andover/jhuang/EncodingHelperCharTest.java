@@ -576,7 +576,7 @@ public class EncodingHelperCharTest {
 	//Tests that getCharacterName() does not return empty
 	@Test
 	public void getCharacterNameShouldReturnNonEmpty() {
-		EncodingHelperChar c = new EncodingHelperChar(0x4453);
+		EncodingHelperChar c = new EncodingHelperChar(0xE9);
 		assertFalse("Failed to generate non empty string", 
 				c.getCharacterName().isEmpty());	
 	}
