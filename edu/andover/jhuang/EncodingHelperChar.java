@@ -33,7 +33,7 @@ class EncodingHelperChar {
     }
     
     //jenny
-    //overlong sequence???
+    //overlong sequence??? max gives out wrong value??
     public EncodingHelperChar(byte[] utf8Bytes) {
     	int numBytes = utf8Bytes.length;
     	
@@ -175,15 +175,14 @@ class EncodingHelperChar {
      * @return the U+ string for this character
      */
     public String toCodepointString() {
-    	//convert codepoint into hex then add U+
     	String s = "U+";
-    	if (codepoint <= 0xF)
+    	if (codepoint <= 0xF) //one digit hex
     		s += "000" + Integer.toHexString(codepoint);
-    	else if (codepoint > 0xF && codepoint <= 0xFF)
+    	else if (codepoint > 0xF && codepoint <= 0xFF) //two digit hex
     		s += "00" + Integer.toHexString(codepoint);
-    	else if (codepoint > 0xFF && codepoint <= 0xFFF)
+    	else if (codepoint > 0xFF && codepoint <= 0xFFF) //three digit hex
 			s += "0" + Integer.toHexString(codepoint);
-    	else
+    	else //four or more digit hex
 			s += Integer.toHexString(codepoint);
     	return s.toUpperCase();
     }
@@ -221,26 +220,22 @@ class EncodingHelperChar {
      * @return this character's Unicode name
      */
     public String getCharacterName() {
-        // Not yet implemented.
     	//Cameron's Piazza Help
-    	//figure out how to go from int codepoint to four/five character
-    	//string codepoint
-    	//String stringCodepoint = codepoint; //insert conversion here
+    	String a = this.toCodepointString().substring(2);
     	try {
     	    Scanner unicodetxt = new Scanner(new File("UnicodeData.txt"));
     	    int i = 0;
     	    while (unicodetxt.hasNextLine()) {
     	    	  String[] data = unicodetxt.nextLine().split(";");
-    	    	  // do something with this
-    	    	  if(data[i].equals("0000"))
-    	    		  	return(data[i+1]);	
+    	    	  if(data[i].equals(a))
+    	    		  	return data[i+1];	
+    	    	  else
     	    	        i++;   	
     	    	  }
     	    }
-    	    catch (IOException e) {	    
+    	    catch (IOException e) {	
+    	    	return ""; //what to do hereeeee
     	    }
-    		
-        return "";
     }
     
     public static void main(String[] args)
@@ -254,7 +249,7 @@ class EncodingHelperChar {
 		EncodingHelperChar c = new EncodingHelperChar(b);
 		System.out.println(c.getCodepoint());
 		EncodingHelperChar w = new EncodingHelperChar(0xE4);
-		System.out.println(w.toCodepointString());
+		System.out.println(w.toCodepointString().substring(2));
     }
     //test
    /* public static void main(String[] args)
