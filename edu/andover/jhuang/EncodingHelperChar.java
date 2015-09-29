@@ -32,7 +32,7 @@ class EncodingHelperChar {
         this.codepoint = codepoint;
     }
     
-    //jenny
+    //jenny HALP
     //overlong sequence??? max gives out wrong value??
     public EncodingHelperChar(byte[] utf8Bytes) {
     	int numBytes = utf8Bytes.length;
@@ -136,7 +136,7 @@ class EncodingHelperChar {
         }*/
     }
     
-    //jenny
+    //jenny HAL
     /**
      * Converts this character into an array of the bytes in its UTF-8
      * representation.
@@ -147,15 +147,14 @@ class EncodingHelperChar {
      * @return the UTF-8 byte array for this character
      */
     public byte[] toUtf8Bytes() {
-        //codepoint to utf8 byte array
-    	//go from codepoint to a byte
-    	//use stress test
+    	//go from codepoint to utf8 bytes
+    	//use stress test numbers
     	if (this.codepoint >= 0 && this.codepoint <= 0x7F) //1 byte long
     	{
     		byte[] b = new byte[] {(byte)codepoint};
     		return b;
     	}
-    	else if (this.codepoint >= 0x80 && this.codepoint <= 0x7FF) //2 bytes long
+    	else if (this.codepoint >= 0x80 && this.codepoint <= 0x7FF) //2 bytes long HALP
     	{
     		byte[] b = new byte[2];
     		byte b1 = 5;
@@ -200,17 +199,17 @@ class EncodingHelperChar {
      */
 
     public String toUtf8String() {
-    	String s = "";
+    	String utf8String = "";
     	byte[] b = this.toUtf8Bytes();
-    	//bytetohexstring
     	for(int i = 0;i < b.length;i++)
     	{   
-    	    s += "\\x" + String.format("0x%02x", b[i]);
+    	    utf8String += "\\x" + String.format("0x%02x", b[i]).toUpperCase(); //bytetohexstring
+            //utf8String += "\\x" + String.valueOf(b[i]);?
     	}
         return "";
     }
     
-    //jenny 
+    //jenny HALP
     /**
      * Generates the official Unicode name for this character.
      *   For example, if this character is a lower-case letter e with an acute
@@ -226,7 +225,7 @@ class EncodingHelperChar {
     	    Scanner unicodetxt = new Scanner(new File("UnicodeData.txt"));
     	    int i = 0;
     	    while (unicodetxt.hasNextLine()) {
-    	    	  String[] data = unicodetxt.nextLine().split(";");
+    	    	  String[] data = unicodetxt.nextLine().split(";"); //numbers repeat in file and what am i doing wrong
     	    	  if(data[i].equals(a))
     	    		  	return data[i+1];	
     	    	  else
@@ -236,6 +235,7 @@ class EncodingHelperChar {
     	    catch (IOException e) {	
     	    	return ""; //what to do hereeeee
     	    }
+    	return "";
     }
     
     public static void main(String[] args)
@@ -251,11 +251,4 @@ class EncodingHelperChar {
 		EncodingHelperChar w = new EncodingHelperChar(0xE4);
 		System.out.println(w.toCodepointString().substring(2));
     }
-    //test
-   /* public static void main(String[] args)
-    {
-    	EncodingHelperChar c = new EncodingHelperChar(0);
-    	System.out.println(c.getCharacterName());
-    }
-    */
 }
