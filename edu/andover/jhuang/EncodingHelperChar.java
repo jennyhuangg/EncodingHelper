@@ -1,6 +1,8 @@
 package edu.andover.jhuang;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The main model class for the EncodingHelper project in Software Design,
@@ -70,7 +72,7 @@ class EncodingHelperChar {
     		boolean isByte1Prefix110 = (byte)(utf8Bytes[0] & 0xE0) == (byte)0xC0;
     		//if first three bits are 110
     		if (isByte1Prefix110) { 
-    			//turns 10 prefix into 0 for 2nd byte
+    			//turns 10 prefix into 00 for 2nd byte
     			int a = (utf8Bytes[1] & 0x3F); 
     			//turns 110 prefix into 000 for 1st byte
     			int b = (utf8Bytes[0] & 0x1F); 
@@ -185,7 +187,7 @@ class EncodingHelperChar {
         }*/
     }
     
-    //jenny HALP
+    //jenny
     /**
      * Converts this character into an array of the bytes in its UTF-8
      * representation.
@@ -200,19 +202,49 @@ class EncodingHelperChar {
     	//use stress test numbers
     	
     	//1 byte long
-    	if (this.codepoint >= 0 && this.codepoint <= 0x7F) 
-    	{
-    		byte[] b = new byte[] {(byte)codepoint};
-    		return b;
+    	if (this.codepoint >= 0 && this.codepoint <= 0x7F) {
+    		byte[] utf8Bytes = new byte[] {(byte)codepoint};
+    		return utf8Bytes;
     	}
-    	//2 bytes long HALP
-    	else if (this.codepoint >= 0x80 && this.codepoint <= 0x7FF) 
-    	{
-    		byte[] b = new byte[2];
-    		byte b1 = 5;
-    		return b;
+    	//2 bytes long
+    	else if (this.codepoint >= 0x80 && this.codepoint <= 0x7FF) {
+    		int prefix = 0x6; //110
+    		int contPrefix = 0x2; //10
+    		int a = codepoint & 0x3F; //last six digits
+    		int b = (codepoint & (0x1F << 6)) >> 6; //five digits in first byte
+    		byte b1 = (byte)((prefix << 5) + b); //byte 1 in array
+    		byte b2 = (byte)((contPrefix << 6) + a); //byte 2 in array
+    		byte[] utf8Bytes = {b1, b2};
+    		return utf8Bytes;
     	}
-        return null;
+    	//3 bytes long
+    	else if (this.codepoint >= 0x800 && this.codepoint <= 0xFFFF) {
+    		int prefix = 0xE; //1110
+    		int contPrefix = 0x2; //10
+    		int a = codepoint & 0x3F; //last six digits
+    		int b = (codepoint & (0x3F << 6)) >> 6; //next six digits
+    		int c = (codepoint & (0x1F << 12)) >> 12; //first five digits
+    		byte b1 = (byte)((prefix << 4) + c); 
+    		byte b2 = (byte)((contPrefix << 6) + b); 
+    		byte b3 = (byte)((contPrefix << 6) + a);
+    		byte[] utf8Bytes = {b1, b2, b3};
+    		return utf8Bytes;
+    	}
+    	//4 bytes long
+    	else {
+    		int prefix = 0x1E; //11110
+    		int contPrefix = 0x2; //10
+    		int a = codepoint & 0x3F; //last six digits
+    		int b = (codepoint & (0x3F << 6)) >> 6; //next six digits
+    		int c = (codepoint & (0x3F << 12)) >> 12; //next six digits
+    		int d = (codepoint & (0x1F << 18)) >> 18; //first five digits
+    		byte b1 = (byte)((prefix << 3) + d);
+    		byte b2 = (byte)((contPrefix << 6) + c);
+    		byte b3 = (byte)((contPrefix << 6) + b); 
+    		byte b4 = (byte)((contPrefix << 6) + a); 
+    		byte[] utf8Bytes = {b1, b2, b3, b4};
+    		return utf8Bytes;
+    	}
     }
     
     //jenny DONE
@@ -238,7 +270,7 @@ class EncodingHelperChar {
     	return s.toUpperCase();
     }
     
-    //roberto
+    //jenny DONE
     /**
      * Generates a hexadecimal representation of this character suitable for
      * pasting into a string literal in languages that support hexadecimal byte
@@ -253,13 +285,12 @@ class EncodingHelperChar {
     public String toUtf8String() {
     	String utf8String = "";
     	byte[] b = this.toUtf8Bytes();
-    	for(int i = 0;i < b.length;i++)
+    	for(int i = 0; i < b.length; i++)
     	{   
     		//bytetohexstring
-    	    utf8String += "\\x" + String.format("0x%02x", b[i]).toUpperCase(); 
-            //utf8String += "\\x" + String.valueOf(b[i]);?
+            utf8String += "\\x" + String.valueOf(b[i]).toUpperCase();
     	}
-        return "";
+        return utf8String;
     }
     
     //jenny DONE
@@ -295,7 +326,7 @@ class EncodingHelperChar {
     
     public static void main(String[] args)
     {
-		EncodingHelperChar c2 = new EncodingHelperChar(0x171);
+		/*EncodingHelperChar c2 = new EncodingHelperChar(0x171);
 		System.out.println(c2.getCharacterName());
 		
 		EncodingHelperChar c3 = new EncodingHelperChar(0x4235);
@@ -307,6 +338,19 @@ class EncodingHelperChar {
 		String expected2 = "<control> BELL";
 		System.out.println(expected2.equals(c4.getCharacterName()));
 		System.out.println(c4.getCharacterName());
+		
+		EncodingHelperChar c = new EncodingHelperChar(0xE9);
+		System.out.println(c.toUtf8String());*/
+		
+		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
+		byte[] expected2 = {(byte)0xF0, (byte)0x9A, (byte)0xAA, (byte)0xAA};
+		
+		EncodingHelperChar c = new EncodingHelperChar(0x1AAAA);
+		byte[] b = c.toUtf8Bytes();
+		for (int i = 0; i < b.length; i++)
+		{
+		System.out.println(String.format("0x%02X", b[i]));
+		}
 		
     }
 }
