@@ -33,6 +33,7 @@ class EncodingHelperChar {
     }
     
     //jenny
+    //overlong sequence???
     public EncodingHelperChar(byte[] utf8Bytes) {
     	int numBytes = utf8Bytes.length;
     	
@@ -146,11 +147,24 @@ class EncodingHelperChar {
      * @return the UTF-8 byte array for this character
      */
     public byte[] toUtf8Bytes() {
-        // Not yet implemented.
+        //codepoint to utf8 byte array
+    	//go from codepoint to a byte
+    	//use stress test
+    	if (this.codepoint >= 0 && this.codepoint <= 0x7F) //1 byte long
+    	{
+    		byte[] b = new byte[] {(byte)codepoint};
+    		return b;
+    	}
+    	else if (this.codepoint >= 0x80 && this.codepoint <= 0x7FF) //2 bytes long
+    	{
+    		byte[] b = new byte[2];
+    		byte b1 = 5;
+    		return b;
+    	}
         return null;
     }
     
-    //jenny
+    //jenny DONE
     /**
      * Generates the conventional 4-digit hexadecimal code point notation for
      * this character.
@@ -161,16 +175,17 @@ class EncodingHelperChar {
      * @return the U+ string for this character
      */
     public String toCodepointString() {
-    	byte[] b = this.toUtf8Bytes();
-    	//convert utf 8 byte array into a byte array for the codepoint
-    	//convert byte array to codepoint by every four --> one digit
-    	//turn into a string
-    	int length = b.length;
-    	
-    	//for (int i = 0; i < length; i++) {
-        	//byteToHexString(b[i]);
-    	//}
-    	return "";
+    	//convert codepoint into hex then add U+
+    	String s = "U+";
+    	if (codepoint <= 0xF)
+    		s += "000" + Integer.toHexString(codepoint);
+    	else if (codepoint > 0xF && codepoint <= 0xFF)
+    		s += "00" + Integer.toHexString(codepoint);
+    	else if (codepoint > 0xFF && codepoint <= 0xFFF)
+			s += "0" + Integer.toHexString(codepoint);
+    	else
+			s += Integer.toHexString(codepoint);
+    	return s.toUpperCase();
     }
     
     //roberto
@@ -184,7 +199,7 @@ class EncodingHelperChar {
      *
      * @return the escaped hexadecimal byte string
      */
-    //use the previous method to do this and play around with string
+
     public String toUtf8String() {
     	String s = "";
     	byte[] b = this.toUtf8Bytes();
@@ -238,6 +253,8 @@ class EncodingHelperChar {
 		int x = 0x10FFFF;
 		EncodingHelperChar c = new EncodingHelperChar(b);
 		System.out.println(c.getCodepoint());
+		EncodingHelperChar w = new EncodingHelperChar(0xE4);
+		System.out.println(w.toCodepointString());
     }
     //test
    /* public static void main(String[] args)
