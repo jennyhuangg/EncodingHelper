@@ -26,14 +26,16 @@ class EncodingHelperChar {
     	int maxCodepoint = 0x10FFFF;
     	int minCodepoint = 0;
     	if (codepoint > maxCodepoint)
-        	throw new IllegalArgumentException ("codepoint out of range - too large");
+        	throw new IllegalArgumentException ("codepoint out of range"
+        			+ " - too large");
         if (codepoint < minCodepoint)
-        	throw new IllegalArgumentException ("codepoint out of range - negative");
+        	throw new IllegalArgumentException ("codepoint out of range"
+        			+ " - negative");
         this.codepoint = codepoint;
     }
     
     //jenny HALP
-    //overlong sequence??? max gives out wrong value??
+    //overlong sequence??
     public EncodingHelperChar(byte[] utf8Bytes) {
     	int numBytes = utf8Bytes.length;
     	
@@ -47,7 +49,8 @@ class EncodingHelperChar {
     			codepoint = utf8Bytes[0]; 
     		}
     		else {
-    			throw new IllegalArgumentException ("one byte sequence does not begin with 0");
+    			throw new IllegalArgumentException ("one byte sequence does not"
+    					+ " begin with 0");
     		}
     	}
     	else if (numBytes == 2) {
@@ -55,18 +58,26 @@ class EncodingHelperChar {
     		for (int i = 1; i < numBytes; i++)
     		{
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
-    				throw new IllegalArgumentException("continuation byte does not have prefix 10");
+    				throw new IllegalArgumentException("continuation byte does"
+    						+ " not have prefix 10");
     		}
-    		if (isByte1Prefix110) { //if first three bits are 110
-    			int a = (byte)(utf8Bytes[1] & 0x3F); //turns 10 prefix into 0 for 2nd byte
-    			int b = (byte)(utf8Bytes[0] & 0x1F); //turns 110 prefix into 000 for 1st byte
-    			if (b<<6 + a <= 0x10FFFF)
-    				codepoint = b<<6 + a; 
+    		//if first three bits are 110
+    		if (isByte1Prefix110) { 
+    			//turns 10 prefix into 0 for 2nd byte
+    			int a = (byte)(utf8Bytes[1] & 0x3F); 
+    			//turns 110 prefix into 000 for 1st byte
+    			int b = (byte)(utf8Bytes[0] & 0x1F); 
+    			int potentialCodepoint = (b<<6) + a;
+    			int maxCodepoint = 0x10FFFF;
+    			if (potentialCodepoint <= maxCodepoint)
+    				codepoint = potentialCodepoint; 
     			else
-    				throw new IllegalArgumentException("codepoint out of range  - too large");
+    				throw new IllegalArgumentException("codepoint out of range"
+    						+ "  - too large");
     		}
     		else {
-    			throw new IllegalArgumentException ("two byte sequence does not begin with 110");
+    			throw new IllegalArgumentException ("two byte sequence does not"
+    					+ " begin with 110");
     		}
     	}
     	else if (numBytes == 3) {
@@ -74,41 +85,61 @@ class EncodingHelperChar {
     		for (int i = 1; i < numBytes; i++)
     		{
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
-    				throw new IllegalArgumentException("continuation byte does not have prefix 10");
+    				throw new IllegalArgumentException("continuation byte does"
+    						+ " not have prefix 10");
     		}
-    		if (isByte1Prefix1110) { //if first four bits are 1110
-    			int a = (byte)(utf8Bytes[2] & 0x3F); //turns 10 prefix into 00 for 3rd byte
-    			int b = (byte)(utf8Bytes[1] & 0x3F); //turns 10 prefix into 00 for 2nd byte
-    			int c = (byte)(utf8Bytes[0] & 0x0F); //turns 1110 prefix into 0000 for 1st byte
-    			if (c<<12 + b<<6 + a <= 0x10FFFF)
-    				codepoint = c<<12 + b<<6 + a; 
+    		//if first four bits are 1110
+    		if (isByte1Prefix1110) { 
+    			//turns 10 prefix into 00 for 3rd byte
+    			int a = (byte)(utf8Bytes[2] & 0x3F); 
+    			//turns 10 prefix into 00 for 2nd byte
+    			int b = (byte)(utf8Bytes[1] & 0x3F);
+    			//turns 1110 prefix into 0000 for 1st byte
+    			int c = (byte)(utf8Bytes[0] & 0x0F); 
+    			//cam helped me understand why I should use parentheses
+    			int potentialCodepoint = (c<<12) + (b<<6) + a; 
+    			int maxCodepoint = 0x10FFFF;
+    			if (potentialCodepoint <= maxCodepoint)
+    				codepoint = potentialCodepoint; 
+
     			else
-    				throw new IllegalArgumentException("codepoint out of range  - too large");
+    				throw new IllegalArgumentException("codepoint out of range"
+    						+ "  - too large");
     		}
     		else {
-    			throw new IllegalArgumentException ("two byte sequence does not begin with 110");
+    			throw new IllegalArgumentException ("two byte sequence does "
+    					+ "not begin with 110");
     		}
     	}
     	else if (numBytes == 4) {
     		for (int i = 1; i < numBytes; i++)
     		{
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
-    				throw new IllegalArgumentException("continuation byte does not have prefix 10");
+    				throw new IllegalArgumentException("continuation byte does"
+    						+ " not have prefix 10");
     		}
-    		boolean isByte1Prefix11110 = (byte)(utf8Bytes[0] & 0xF8) == (byte)0xF0;
-    		if (isByte1Prefix11110) { //if first five bits are 11110
-    			int a = (byte)(utf8Bytes[3] & 0x3F); //turns 10 prefix into 00 for 4th byte
-    			int b = (byte)(utf8Bytes[2] & 0x3F); //turns 10 prefix into 00 for 3rd byte
-    			int c = (byte)(utf8Bytes[1] & 0x3F); //turns 10 prefix into 00 for 2nd byte
-    			int d = (byte)(utf8Bytes[0] & 0x07); //turns 11110 prefix into 00000 for 1st byte
-    			if (d<<18 + c<<12 + b<<6 + a > 0x10FFFF)
-    				throw new IllegalArgumentException("codepoint out of range  - too large");
+    		boolean isByte1Prefix11110 = (utf8Bytes[0] & 0xF8) == (byte)0xF0;
+    		//if first five bits are 11110
+    		if (isByte1Prefix11110) { 
+    			//turns 10 prefix into 00 for 4th byte
+    			int a = utf8Bytes[3] & 0x3F; 
+    			//turns 10 prefix into 00 for 3rd byte
+    			int b = utf8Bytes[2] & 0x3F; 
+    			//turns 10 prefix into 00 for 2nd byte
+    			int c = utf8Bytes[1] & 0x3F; 
+    			//turns 11110 prefix into 00000 for 1st byte
+    			int d = utf8Bytes[0] & 0x07; 
+    			int potentialCodepoint = (d<<18) + (c<<12) + (b<<6) + a;
+    			int maxCodepoint = 0x10FFFF;
+    			if (potentialCodepoint <= maxCodepoint)
+    				codepoint = potentialCodepoint; 
     			else
-    				codepoint = d<<18 + c<<12 + b<<6 + a;
-
+    				throw new IllegalArgumentException("codepoint out of range"
+    						+ "  - too large");
     		}
     		else {
-    			throw new IllegalArgumentException ("two byte sequence does not begin with 110");
+    			throw new IllegalArgumentException ("two byte sequence does not"
+    					+ " begin with 110");
     		}
     	}
     	else
@@ -149,12 +180,15 @@ class EncodingHelperChar {
     public byte[] toUtf8Bytes() {
     	//go from codepoint to utf8 bytes
     	//use stress test numbers
-    	if (this.codepoint >= 0 && this.codepoint <= 0x7F) //1 byte long
+    	
+    	//1 byte long
+    	if (this.codepoint >= 0 && this.codepoint <= 0x7F) 
     	{
     		byte[] b = new byte[] {(byte)codepoint};
     		return b;
     	}
-    	else if (this.codepoint >= 0x80 && this.codepoint <= 0x7FF) //2 bytes long HALP
+    	//2 bytes long HALP
+    	else if (this.codepoint >= 0x80 && this.codepoint <= 0x7FF) 
     	{
     		byte[] b = new byte[2];
     		byte b1 = 5;
@@ -203,7 +237,8 @@ class EncodingHelperChar {
     	byte[] b = this.toUtf8Bytes();
     	for(int i = 0;i < b.length;i++)
     	{   
-    	    utf8String += "\\x" + String.format("0x%02x", b[i]).toUpperCase(); //bytetohexstring
+    		//bytetohexstring
+    	    utf8String += "\\x" + String.format("0x%02x", b[i]).toUpperCase(); 
             //utf8String += "\\x" + String.valueOf(b[i]);?
     	}
         return "";
@@ -225,7 +260,8 @@ class EncodingHelperChar {
     	    Scanner unicodetxt = new Scanner(new File("UnicodeData.txt"));
     	    int i = 0;
     	    while (unicodetxt.hasNextLine()) {
-    	    	  String[] data = unicodetxt.nextLine().split(";"); //numbers repeat in file and what am i doing wrong
+    	    	//numbers repeat in file and what am i doing wrong
+    	    	  String[] data = unicodetxt.nextLine().split(";"); 
     	    	  if(data[i].equals(a))
     	    		  	return data[i+1];	
     	    	  else
@@ -244,10 +280,15 @@ class EncodingHelperChar {
 		//corresponding codepoint is U+110000
 		EncodingHelperChar d = new EncodingHelperChar(a);
 		System.out.println(d.getCodepoint());
+    	
     	byte[] b = new byte[]{(byte)0xF4,(byte)0x8F,(byte)0xBF,(byte)0xBF};
 		int x = 0x10FFFF;
 		EncodingHelperChar c = new EncodingHelperChar(b);
 		System.out.println(c.getCodepoint());
+		
+		EncodingHelperChar p = new EncodingHelperChar(0x10FFFF);
+		System.out.println(p.getCodepoint());
+		
 		EncodingHelperChar w = new EncodingHelperChar(0xE4);
 		System.out.println(w.toCodepointString().substring(2));
     }
