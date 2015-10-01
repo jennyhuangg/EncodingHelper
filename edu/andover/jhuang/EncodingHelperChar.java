@@ -69,8 +69,7 @@ class EncodingHelperChar {
     	//two byte sequence
     	else if (numBytes == 2) {
     		//checks that the continuation bytes have correct prefix 10
-    		for (int i = 1; i < numBytes; i++)
-    		{
+    		for (int i = 1; i < numBytes; i++) {
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
     				throw new IllegalArgumentException("continuation byte does"
     						+ " not have prefix 10");
@@ -100,8 +99,7 @@ class EncodingHelperChar {
     	//three byte sequence
     	else if (numBytes == 3) {
     		//checks that the continuation bytes have correct prefix 10
-    		for (int i = 1; i < numBytes; i++)
-    		{
+    		for (int i = 1; i < numBytes; i++) {
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
     				throw new IllegalArgumentException("continuation byte does"
     						+ " not have prefix 10");
@@ -133,8 +131,7 @@ class EncodingHelperChar {
     	//four byte sequence
     	else if (numBytes == 4) {
     		//checks that continuation bytes have correct prefix 10
-    		for (int i = 1; i < numBytes; i++)
-    		{
+    		for (int i = 1; i < numBytes; i++) {
     			if ((byte)(utf8Bytes[i] & 0xC0) != (byte)0x80)
     				throw new IllegalArgumentException("continuation byte does"
     						+ " not have prefix 10");
@@ -296,8 +293,7 @@ class EncodingHelperChar {
     public String toUtf8String() {
     	String utf8String = "";
     	byte[] b = this.toUtf8Bytes();
-    	for(int i = 0; i < b.length; i++)
-    	{   
+    	for(int i = 0; i < b.length; i++) {   
             utf8String += "\\x" + String.format("%02x", b[i]).toUpperCase();
     	}
         return utf8String;
