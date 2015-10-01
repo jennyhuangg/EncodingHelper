@@ -42,7 +42,8 @@ public class EncodingHelperCharTest {
 		int x = 0x10FFFF;
 		EncodingHelperChar c = new EncodingHelperChar(x);
 		int outputCodepoint = c.getCodepoint();
-		assertEquals("Failed to construct correctly - 0x10FFFF should be 0x10FFFF",
+		assertEquals("Failed to construct correctly - 0x10FFFF should be "
+				+ "0x10FFFF",
 				x, outputCodepoint);
 	}
 	
@@ -84,7 +85,7 @@ public class EncodingHelperCharTest {
 	
 	//For arbitrary byte array in bounds
 	@Test
-	public void getCodepointShouldCorrespondToByteArrayPassedToConstructorArray() {
+	public void getCodepointShouldCorrespondToArrayPassedToConstructorArray() {
 		byte[] b = new byte[]{(byte)0xF0,(byte)0x9F,(byte)0xA0,(byte)0x80};
 		int x = 0x1F800;
 		EncodingHelperChar c = new EncodingHelperChar(b);
@@ -120,7 +121,8 @@ public class EncodingHelperCharTest {
 	@Test 
 	public void constructorArrayWithTooLargeCodepointShouldThrow() {
 		try {
-				byte[] b = new byte[] {(byte)0xF4,(byte)0x9F,(byte)0xBF,(byte)0xBF};
+				byte[] b = new byte[] {(byte)0xF4,(byte)0x9F,
+						(byte)0xBF,(byte)0xBF};
 				//corresponding codepoint is U+110000
 				EncodingHelperChar c = new EncodingHelperChar(b);
 				fail(
@@ -168,7 +170,7 @@ public class EncodingHelperCharTest {
 	 * the binary representation of an input 1 byte sequence begins with 1.
 	 */
 	@Test
-	public void constructorArrayWithIncorrectPrefixFor1ByteSequenceShouldThrow() {
+	public void constructorArrayWithWrongPrefixFor1ByteSequenceShouldThrow() {
 		 //For arbitrary middle invalid 1 byte
 		try {
 			byte[] b1 = {(byte)0x9A};
@@ -209,7 +211,7 @@ public class EncodingHelperCharTest {
 			byte[] b1 = new byte[]{(byte)0x74,(byte)0x8F,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c1 = new EncodingHelperChar(b1);
 			fail("Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte of multi-byte sequence has prefix of O.");
+				+"prefix - first byte of multi-byte sequence has prefix of O.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}	
@@ -218,7 +220,7 @@ public class EncodingHelperCharTest {
 			byte[] b2 = new byte[]{(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00};
 			EncodingHelperChar c2 = new EncodingHelperChar(b2);
 			fail("Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte of multi-byte sequence has prefix of O.");
+				+"prefix - first byte of multi-byte sequence has prefix of O.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}
@@ -227,7 +229,7 @@ public class EncodingHelperCharTest {
 			byte[] b3 = new byte[]{(byte)0x7F,(byte)0xBF,(byte)0xBF,(byte)0xBF};
 			EncodingHelperChar c3 = new EncodingHelperChar(b3);
 			fail("Constructor didn't throw when byte sequence had incorrect"
-				+ "prefix - first byte of multi-byte sequence has prefix of O.");
+				+"prefix - first byte of multi-byte sequence has prefix of O.");
 		} catch (IllegalArgumentException e) {
 			//No action needed.
 		}	
@@ -324,7 +326,8 @@ public class EncodingHelperCharTest {
 	}
 	/*
 	 * Tests that the constructor (with array parameter) throws when UTF-8
-	 * byte sequence are UTF-16 surrogates because they do not represent valid characters.
+	 * byte sequence are UTF-16 surrogates because they do not represent 
+	 * valid characters.
 	 */
 	@Test
 	public void constructorArrayWithUtf16SurrogatesShouldThrow() {
@@ -409,7 +412,8 @@ public class EncodingHelperCharTest {
 	public void setCodepointShouldMatchCodepointPassedToMethod() {
 		EncodingHelperChar c = new EncodingHelperChar(0x1F1E);
 		c.setCodepoint(0x2345);
-		assertEquals("Failed to change codepoint correctly - 0x1F1E should become 0x2345",
+		assertEquals("Failed to change codepoint correctly - "
+				+ "0x1F1E should become 0x2345",
 					0x2345, c.getCodepoint());
 	}
 	//For codepoint of 0 (lower bound of valid codepoints)
@@ -417,7 +421,8 @@ public class EncodingHelperCharTest {
 	public void minCodepointShouldSetCorrectly() {
 		EncodingHelperChar c = new EncodingHelperChar(0x1F1E);
 		c.setCodepoint(0);
-		assertEquals("Failed to change codepoint correctly - 0x1F1E should become 0",
+		assertEquals("Failed to change codepoint correctly - "
+				+ "0x1F1E should become 0",
 					0, c.getCodepoint());
 	}
 	//For codepoint of 0x10FFFF (upper bound of valid codepoints)
@@ -425,7 +430,8 @@ public class EncodingHelperCharTest {
 	public void maxCodepointShouldSetCorrectly() {
 		EncodingHelperChar c = new EncodingHelperChar(0x1F1E);
 		c.setCodepoint(0x10FFFF);
-		assertEquals("Failed to change codepoint correctly - 0x1F1E should become 10FFFF",
+		assertEquals("Failed to change codepoint correctly - "
+				+ "0x1F1E should become 10FFFF",
 					0x10FFFF, c.getCodepoint());
 	}
 	
@@ -472,18 +478,21 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to generate valid UTF-8 Byte Sequence - empty", 
 				c.toUtf8Bytes().length == 0);
 	}
-	//Tests that toUtf8Bytes() correctly converts character to UTF-8 byte array for edge cases
+	//Tests that toUtf8Bytes() correctly converts character to UTF-8 byte 
+	//array for edge cases
 	@Test
 	public void toUTF8BytesByteArrayShouldMatchCodepoint() {
 		//8 bit edge case
 		EncodingHelperChar c = new EncodingHelperChar(0xE4);
 		byte[] expected = {(byte)0xC3, (byte)0xA4};
-		assertArrayEquals("Failed to correctly return character as a UTF-8 Byte Array", 
+		assertArrayEquals("Failed to correctly return character as a "
+				+ "UTF-8 Byte Array", 
 				expected, c.toUtf8Bytes());
 		//17 bit edge case
 		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
 		byte[] expected2 = {(byte)0xF0, (byte)0x9A, (byte)0xAA, (byte)0xAA};
-		assertArrayEquals("Failed to correctly return character as a UTF-8 Byte Array", 
+		assertArrayEquals("Failed to correctly return character as a "
+				+ "UTF-8 Byte Array", 
 				expected2, c2.toUtf8Bytes());
 	}
 	
@@ -491,7 +500,8 @@ public class EncodingHelperCharTest {
 	@Test 
 	public void toCodepointStringShouldReturnNonNull() {
 		EncodingHelperChar c = new EncodingHelperChar(0x44);
-		assertNotNull("Failed to generate non-null string", c.toCodepointString());
+		assertNotNull("Failed to generate non-null string", 
+				c.toCodepointString());
 	}
 	//Tests that toCodepointString() does not return empty
 	@Test
@@ -500,7 +510,8 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to generate valid U+ string - empty", 
 				c.toCodepointString().isEmpty());	
 	}
-	//Tests that toCodepointString() correctly converts character to U+ string for edge cases
+	//Tests that toCodepointString() correctly converts character to U+ string 
+	//for edge cases
 	@Test
 	public void toCodepointStringShouldMatchCodepoint() {
 		//test a two digit hex codepoint
@@ -543,19 +554,20 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to generate non empty string", 
 				c.toUtf8String().isEmpty());	
 	}
-	//Tests that toUtf8String() correctly converts character to the escaped hexadecimal byte string
+	//Tests that toUtf8String() correctly converts character to the escaped 
+	//hexadecimal byte string
 	@Test
 	public void toUtf8StringShouldMatchCodepoint() {
 		//test a two digit hex codepoint
 		EncodingHelperChar c = new EncodingHelperChar(0xE9);
 		String expected = "\\xC3\\xA9";
-		assertEquals("Failed to correctly return character as an escaped hexadecimal"
-				+ "byte string", expected, c.toUtf8String());
+		assertEquals("Failed to correctly return character as an escaped "
+				+ "hexadecimalbyte string", expected, c.toUtf8String());
 		//test a five digit hex codepoint
 		EncodingHelperChar c2 = new EncodingHelperChar(0x1AAAA);
 		String expected2 = "\\xF0\\x9A\\xAA\\xAA";
-		assertEquals("Failed to correctly return character as an escaped hexadecimal"
-				+ "byte string", expected2, c2.toUtf8String());
+		assertEquals("Failed to correctly return character as an escaped "
+				+ "hexadecimal byte string", expected2, c2.toUtf8String());
 	}
 	//Tests that toUtf8String() returns string without quotation marks
 	@Test
@@ -571,7 +583,8 @@ public class EncodingHelperCharTest {
 	@Test 
 	public void getCharacterNameShouldReturnNonNull() {
 		EncodingHelperChar c = new EncodingHelperChar(0x7E53);
-		assertNotNull("Failed to generate non-null string", c.getCharacterName());
+		assertNotNull("Failed to generate non-null string", 
+				c.getCharacterName());
 	}
 	//Tests that getCharacterName() does not return empty
 	@Test
@@ -580,8 +593,8 @@ public class EncodingHelperCharTest {
 		assertFalse("Failed to generate non empty string", 
 				c.getCharacterName().isEmpty());	
 	}
-	//Tests that getCharacterName() correctly converts character to the character's
-	//official Unicode name.
+	//Tests that getCharacterName() correctly converts character to the 
+	//character's official Unicode name.
 	@Test
 	public void getCharacterNameShouldMatchCodepoint() {
 		//test a two digit hex codepoint
@@ -596,16 +609,17 @@ public class EncodingHelperCharTest {
 				expected2, c2.getCharacterName());
 	}
 	/*
-	 * Tests that if a codepoint has specified name "<control>",getCharacterName() 
-	 * appends the more specific name from the “comment field” near the end 
-	 * of that character's row.
+	 * Tests that if a codepoint has specified name "<control>",
+	 * getCharacterName() appends the more specific name from the “comment 
+	 * field” near the end of that character's row.
 	 */
 	@Test
 	public void getCharacterNameControlShouldMatchCodepoint() {
 		EncodingHelperChar c = new EncodingHelperChar(0x0007);
 		String expected = "<control> BELL";
-		assertEquals("Failed to return special character's Unicode name with '<control>'"
-				+ " and more specific name", expected, c.getCharacterName());
+		assertEquals("Failed to return special character's Unicode name with "
+				+ "'<control>' and more specific name", expected, 
+				c.getCharacterName());
 	}
 	
 	/*
@@ -616,8 +630,9 @@ public class EncodingHelperCharTest {
 	public void getCharacterNameUnDefinedShouldMatchCodepoint() {
 		EncodingHelperChar c = new EncodingHelperChar(0x3FFF);
 		String expected = "<unknown> U+3FFF";
-		assertEquals("Failed to return not defined character's Unicode name with '<unknown>'"
-				+ " and codepoint in hex", expected, c.getCharacterName());
+		assertEquals("Failed to return not defined character's Unicode name "
+				+ "with '<unknown>' and codepoint in hex", expected, 
+				c.getCharacterName());
 	}
 	
 	//Tests that getCharacterName() returns string without quotation marks
