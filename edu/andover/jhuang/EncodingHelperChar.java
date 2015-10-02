@@ -175,7 +175,8 @@ class EncodingHelperChar {
     }
     
     public EncodingHelperChar(char ch) {
-        codepoint = (int) ch;
+        char[] c = {ch};
+        codepoint = Character.codePointAt(c, 0);
     }
     
     public int getCodepoint() {
@@ -332,4 +333,5 @@ class EncodingHelperChar {
     	//if not in UnicodeData.txt (undefined)
     	return "<unknown> " + this.toCodepointString();
     }
+
 }
