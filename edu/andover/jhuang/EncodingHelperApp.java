@@ -52,13 +52,13 @@ public class EncodingHelperApp {
 					return ehc.toUtf8String();
 				}
 				//codepoint output
-				else if (outputType.equals("string")) {
+				else if (outputType.equals("codepoint")) {
 					return ehc.toCodepointString();
 				}
 				//summary output
 				else {
 					return "Character: " + c + "\n" +
-						"Codepoint: " + ehc.toCodepointString() + "\n" +
+						"Code point: " + ehc.toCodepointString() + "\n" +
 						"Name: " + ehc.getCharacterName() + "\n" +
 						"UTF-8: " + ehc.toUtf8String();
 				}	
@@ -74,16 +74,16 @@ public class EncodingHelperApp {
 				}
 				//utf8 output
 				else if (outputType.equals("utf8")) {
-					return ehs.toCodepointString();
+					return ehs.toUtf8String();
 				}
 				//codepoint output
 				else if (outputType.equals("codepoint")) {
-					return ehs.toUtf8String();
+					return ehs.toCodepointString();
 				}
 				// summary output
 				else {
 					return "String: " + data.get(0) + "\n" +
-						"Codepoint: " + ehs.toCodepointString() + "\n" +
+						"Code points: " + ehs.toCodepointString() + "\n" +
 						"UTF-8: " + ehs.toUtf8String();
 				}
 			}
@@ -94,12 +94,12 @@ public class EncodingHelperApp {
 			ArrayList<Byte> utf8Bytes = toUtf8BytesFromString(utf8String);
 			EncodingHelperString ehs = new 
 					EncodingHelperString(utf8Bytes);
-			ArrayList<Integer> codepoints = ehs.getCodepoint();
+			ArrayList<Integer> codepoints = ehs.getCodepoints();
 			
 			if (data.size() > 1)
 				return "Utf8 input can only be one arg";
 			//special case: utf8 sequence represents one character
-			else if (ehs.getCodepoint().size() == 1) {
+			else if (codepoints.size() == 1) {
 				int codepoint = codepoints.get(0);
 				EncodingHelperChar ehc = 
 						new EncodingHelperChar(codepoint);
@@ -114,27 +114,27 @@ public class EncodingHelperApp {
 					return utf8String;
 				}
 				//codepoint output
-				else if (outputType.equals("string")) {
+				else if (outputType.equals("codepoint")) {
 					return ehc.toCodepointString();
 				}
 				//summary output
 				else {
 					String s = new String(new int[] {codepoint}, 0, 1);
 					return "Character: " + s + "\n" +
-						"Codepoint: " + ehc.toCodepointString() + "\n" +
+						"Code point: " + ehc.toCodepointString() + "\n" +
 						"Name: " + ehc.getCharacterName() + "\n" +
 						"UTF-8: " + utf8String;
 				}	
 			}
 			//utf8 is not just one character
-				else {
+			else {
 				//string output
 				if (outputType.equals("string")) {
 					String outputString = "";
 					for (int i = 0; i < codepoints.size(); i++) {
-						//from cam
-						String s = new String(new int[] {codepoints.get(i)}, 0, 1);
-						outputString += s;
+						char[] ch = Character.toChars(codepoints.get(i));
+						outputString += ch[0];
+						
 					}
 					return outputString;
 				}
@@ -155,28 +155,31 @@ public class EncodingHelperApp {
 						outputString += s;
 					}
 					return "String: " + outputString + "\n" +
-						"Codepoint: " + ehs.toCodepointString() + "\n" +
+						"Code point: " + ehs.toCodepointString() + "\n" +
 						"UTF-8: " + ehs.toUtf8String();
 				}
 			}
 		}
 		//codepoint input
 		else if (inputType.equals("codepoint")) {
-			int[] codepoints = new int[data.size()];
-			for (int i = 0; i < data.size(); i++) {
-				
+			String potentialCodepoints = data.get(0);
+			String[] split = potentialCodepoints.split("\\s+");
+			int[] codepoints;
+			if (split.length == 1) {
+				codepoints = new int[data.size()];
+				for (int i = 0; i < data.size(); i++) {
+					codepoints[i] = toIntCodepointFromString(data.get(i));
+				}
 			}
-			String String = data.get(0);
-			ArrayList<Byte> utf8Bytes = toIntCodepointFromString(utf8String);
-			EncodingHelperString ehs = new 
-					EncodingHelperString(utf8Bytes);
-			ArrayList<Integer> codepoints = ehs.getCodepoint();
-			
-			if (data.size() > 1)
-				return "Utf8 input can only be one arg";
-			//special case: utf8 sequence represents one character
-			else if (ehs.getCodepoint().size() == 1) {
-				int codepoint = codepoints.get(0);
+			else {
+				codepoints = new int[split.length];
+				for (int k = 0; k < split.length; k++) {
+					codepoints[k] = toIntCodepointFromString(split[k]);
+				}
+			}
+			//special case: only one codepoint (represents one character)
+			if (codepoints.length == 1) {
+				int codepoint = codepoints[0];
 				EncodingHelperChar ehc = 
 						new EncodingHelperChar(codepoint);
 				//string output
@@ -187,36 +190,38 @@ public class EncodingHelperApp {
 				}
 				//utf8 output
 				else if (outputType.equals("utf8")) {
-					return utf8String;
+					return ehc.toUtf8String();
 				}
 				//codepoint output
-				else if (outputType.equals("string")) {
+				else if (outputType.equals("codepoint")) {
 					return ehc.toCodepointString();
 				}
 				//summary output
 				else {
 					String s = new String(new int[] {codepoint}, 0, 1);
 					return "Character: " + s + "\n" +
-						"Codepoint: " + ehc.toCodepointString() + "\n" +
+						"Code point: " + ehc.toCodepointString() + "\n" +
 						"Name: " + ehc.getCharacterName() + "\n" +
-						"UTF-8: " + utf8String;
+						"UTF-8: " + ehc.toUtf8String();
 				}	
 			}
-			//utf8 is not just one character
-				else {
+			//more than one codepoint (not just one character)
+			else {
+				EncodingHelperString ehs = new EncodingHelperString(codepoints);
 				//string output
 				if (outputType.equals("string")) {
 					String outputString = "";
-					for (int i = 0; i < codepoints.size(); i++) {
+					for (int i = 0; i < codepoints.length; i++) {
 						//from cam
-						String s = new String(new int[] {codepoints.get(i)}, 0, 1);
+						String s = new String(new int[] {codepoints[i]}, 0, 1);
 						outputString += s;
 					}
 					return outputString;
+					
 				}
 				//utf8 output
 				else if (outputType.equals("utf8")) {
-					return utf8String;
+					return ehs.toUtf8String();
 				}
 				//codepoint output
 				else if (outputType.equals("codepoint")) {
@@ -225,24 +230,23 @@ public class EncodingHelperApp {
 				//summary output
 				else {
 					String outputString = "";
-					for (int i = 0; i < codepoints.size(); i++) {
+					for (int i = 0; i < codepoints.length; i++) {
 						//from cam
-						String s = new String(new int[] {codepoints.get(i)}, 0, 1);
+						String s = new String(new int[] {codepoints[i]}, 0, 1);
 						outputString += s;
 					}
 					return "String: " + outputString + "\n" +
-						"Codepoint: " + ehs.toCodepointString() + "\n" +
+						"Code point: " + ehs.toCodepointString() + "\n" +
 						"UTF-8: " + ehs.toUtf8String();
 				}
 			}
 		}
+		return "";
 	}
 	
 	//cam helped me come up with the idea of a data list
 	public static ArrayList<String> getDataList(String[] args) {
 		ArrayList<String> data = new ArrayList<>();
-		String inputType = getInputType(args);
-		String outputType = getOutputType(args);
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-i") || args[i].equals("--input")) {
 				boolean isInputType = args[i+1].equalsIgnoreCase("string") || 
@@ -287,7 +291,7 @@ public class EncodingHelperApp {
 	}
 	
 	public static String getOutputType(String[] args) {
-		for (int i = 0; i < args.length; i++) {
+		for (int i = 0; i+1 < args.length; i++) {
 			if (args[i].equals("-o") || args[i].equals("--output")) {
 				if (args[i+1].equalsIgnoreCase("string"))
 					return "string";
@@ -307,7 +311,8 @@ public class EncodingHelperApp {
 		return "summary";
 	}
 	
-	//more flexible input formatting for  utf8 inputs (special implementation)
+	//convert from utf8 string to utf8 byte ArrayList
+	//more flexible input formatting for utf8 inputs (special implementation)
 	//got a bit of help from cam
 	public static ArrayList<Byte> toUtf8BytesFromString(String utf8String) {
 		ArrayList<Byte> utf8Bytes = new ArrayList<Byte>();
@@ -315,13 +320,14 @@ public class EncodingHelperApp {
 			// backslash is found
 			if (utf8String.charAt(i) == '\\') {
 				if (utf8String.charAt(i+1) == 'x') {
-					String nextByteString = utf8String.substring(i + 2, i + 4);
 					 try {
+						String nextByteString = utf8String.substring(i+2, i+4);
 						int nextByteInt = Integer.parseInt(nextByteString, 16);
 						utf8Bytes.add((byte)nextByteInt);
 					 } catch(IllegalArgumentException e) {
 						 System.out.println("Invalid utf8 format");
 					 }
+					 i += 3;
 				}
 				else {
 					System.out.println("Invalid utf8 format");
@@ -329,28 +335,32 @@ public class EncodingHelperApp {
 			}
 			// x is found
 			else if (utf8String.charAt(i) == 'x') {
-				String nextByteString = utf8String.substring(i + 1, i + 3);
 				 try {
+					String nextByteString = utf8String.substring(i + 1, i + 3);
 					int nextByteInt = Integer.parseInt(nextByteString, 16);
 					utf8Bytes.add((byte)nextByteInt);
 				 } catch(IllegalArgumentException e) {
 					 System.out.println("Invalid utf8 format");
 				 }
+				 i +=2;
 			}
-			else {
-				String nextByteString = utf8String.substring(i, i + 2);
+			else { 
 				 try {
+					String nextByteString = utf8String.substring(i, i + 2);
 					int nextByteInt = Integer.parseInt(nextByteString, 16);
 					utf8Bytes.add((byte)nextByteInt);
 				 } catch(IllegalArgumentException e) {
 					 System.out.println("Invalid utf8 format");
 				 }
+				 i++;
 			}
 			
 		}
 		return utf8Bytes;
 	}
-	//more flexible input formatting for codepoint inputs
+	
+	//convert from string codepoint to int codepoint
+	//with more flexible input formatting for codepoint inputs
 	public static int toIntCodepointFromString(String inputCodepointString) {
 		int codepoint = 0;
 		//begins with U+ like U+00E9

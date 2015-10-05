@@ -16,7 +16,8 @@ public class EncodingHelperString {
 
 	public EncodingHelperString(int[] inputCodepoints) {
 		for (int i = 0; i < inputCodepoints.length; i++) {
-	        codepoints.add(inputCodepoints[i]);
+	        EncodingHelperChar c = new EncodingHelperChar(inputCodepoints[i]);
+			codepoints.add(c.getCodepoint());
 		}
 	}
 	public EncodingHelperString(String inputString) {
@@ -43,35 +44,53 @@ public class EncodingHelperString {
     		
 			//check if first byte of one byte sequence
 			if (isByte1Prefix0) { 
-				byte[] b = {utf8Bytes.get(i)};
-    			EncodingHelperChar ehc = new EncodingHelperChar(b);
-    			codepoints.add(ehc.getCodepoint());
+				 try {
+					byte[] b = {utf8Bytes.get(i)};
+		    		EncodingHelperChar ehc = new EncodingHelperChar(b);
+		    		codepoints.add(ehc.getCodepoint());
+				 } catch(IllegalArgumentException e) {
+					System.out.println("Invalid utf8 byte sequence");
+				 }
     		}
 			//check if first byte of two byte sequence
 			else if (isByte1Prefix110) { 
-    			byte[] b = {utf8Bytes.get(i), utf8Bytes.get(i+1)};
-    			EncodingHelperChar ehc = new EncodingHelperChar(b);
-    			codepoints.add(ehc.getCodepoint());
+				 try {
+		    		byte[] b = {utf8Bytes.get(i), utf8Bytes.get(i+1)};
+		    		EncodingHelperChar ehc = new EncodingHelperChar(b);
+		    		codepoints.add(ehc.getCodepoint());
+				 } catch(IllegalArgumentException e) {
+						 System.out.println("Invalid utf8 byte sequence");
+				 }
+				 i++;
     		}
     		//check if first byte of three byte sequence
 			else if (isByte1Prefix1110) { 
-				byte[] b = {utf8Bytes.get(i), utf8Bytes.get(i+1), 
-						utf8Bytes.get(i+2)};
-    			EncodingHelperChar ehc = new EncodingHelperChar(b);
-    			codepoints.add(ehc.getCodepoint());
+				try {
+					byte[] b = {utf8Bytes.get(i), utf8Bytes.get(i+1), 
+							utf8Bytes.get(i+2)};
+	    			EncodingHelperChar ehc = new EncodingHelperChar(b);
+	    			codepoints.add(ehc.getCodepoint());
+				 } catch(IllegalArgumentException e) {
+						 System.out.println("Invalid utf8 byte sequence");
+				 }
+				 i += 2;
 			}
     		//check if first byte of four byte sequence
-			else {
-				byte[] b = {utf8Bytes.get(i), utf8Bytes.get(i+1), 
-						utf8Bytes.get(i+2), utf8Bytes.get(i+3)};
-    			EncodingHelperChar ehc = new EncodingHelperChar(b);
-    			codepoints.add(ehc.getCodepoint());
-			}
-			
+			else if (isByte1Prefix11110) {
+				try {
+					byte[] b = {utf8Bytes.get(i), utf8Bytes.get(i+1), 
+							utf8Bytes.get(i+2), utf8Bytes.get(i+3)};
+	    			EncodingHelperChar ehc = new EncodingHelperChar(b);
+	    			codepoints.add(ehc.getCodepoint());
+				 } catch(IllegalArgumentException e) {
+						 System.out.println("Invalid utf8 byte sequence");
+				 }
+				i += 3;
+			}	
 		}
 	}
 	
-	public ArrayList<Integer> getCodepoint() {
+	public ArrayList<Integer> getCodepoints() {
 		return codepoints;
 	}
 	
