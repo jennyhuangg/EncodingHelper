@@ -62,7 +62,7 @@ public class EncodingHelperTest {
 		stringCodepoints.add(0x69);
 		EncodingHelperString ehs = new EncodingHelperString("hi");
 		assertEquals("Failed to construct correctly - 'hi' should have "
-				+ "codepoints 0x68 0x69", stringCodepoints, ehs.getCodepoints());
+			+ "codepoints 0x68 0x69", stringCodepoints, ehs.getCodepoints());
 	}
 	
 	@Test

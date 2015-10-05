@@ -151,7 +151,8 @@ public class EncodingHelperApp {
 					String outputString = "";
 					for (int i = 0; i < codepoints.size(); i++) {
 						//from cam
-						String s = new String(new int[] {codepoints.get(i)}, 0, 1);
+						String s = 
+								new String(new int[] {codepoints.get(i)}, 0, 1);
 						outputString += s;
 					}
 					return "String: " + outputString + "\n" +
