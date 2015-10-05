@@ -313,8 +313,7 @@ class EncodingHelperChar {
     	//removes "U+" in the beginning
     	String fourDigitHexCodepoint = this.toCodepointString().substring(2);
     	try {
-    	    Scanner unicodetxt = new Scanner(new File("src/edu/andover/jhuang/"
-    	    		+ "UnicodeData.txt"));
+    	    Scanner unicodetxt = new Scanner(new File("UnicodeData.txt"));
     	    while (unicodetxt.hasNextLine()) {
     	    	  String[] data = unicodetxt.nextLine().split(";"); 
     	    	  //if first entry in array equals the 4-digit hex codepoint
@@ -333,5 +332,4 @@ class EncodingHelperChar {
     	//if not in UnicodeData.txt (undefined)
     	return "<unknown> " + this.toCodepointString();
     }
-
 }
