@@ -1,7 +1,6 @@
 Jenny Huang
-Roberto Rabines
 
-We chose the additional feature of allowing more flexible input formatting for
+I chose the additional feature of allowing more flexible input formatting for
 codepoints and bytes. This means that the program behaves the same when the user
 gives a codepoint in the form U+00EA, \u00EA, 00EA, u00EA, etc. It also behaves 
 the same when the user gives a byte sequence in the form \xC3\xA9, C3A9, xC3xA9,
