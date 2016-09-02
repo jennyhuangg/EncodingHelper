@@ -1,6 +1,7 @@
 Jenny Huang
 
-This program converts to UTF-8 from various encodings.
+This program converts to UTF-8 from various encodings and was created using
+test-driven development. Contains JUnit Tests for non-trivial methods.
 
 I chose the additional feature of allowing more flexible input formatting for
 codepoints and bytes. This means that the program behaves the same when the user
