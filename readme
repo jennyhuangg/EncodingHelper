@@ -1,5 +1,7 @@
 Jenny Huang
 
+This program converts to UTF-8 from various encodings.
+
 I chose the additional feature of allowing more flexible input formatting for
 codepoints and bytes. This means that the program behaves the same when the user
 gives a codepoint in the form U+00EA, \u00EA, 00EA, u00EA, etc. It also behaves 
